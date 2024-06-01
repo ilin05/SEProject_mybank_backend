@@ -1,29 +1,29 @@
 package com.mybank.utils;
 
 public class ApiResult {
-    public Boolean code;
+    public Integer code;
     public String message;
     public Object payload;
 
-    public ApiResult(boolean code, String message) {
+    public ApiResult(Integer code, String message) {
         this.code = code;
         this.message = message;
     }
-    public ApiResult(boolean code, Object payload) {
+    public ApiResult(Integer code, Object payload) {
         this.code = code;
         this.payload = payload;
     }
-    public ApiResult(boolean code, String message, Object payload) {
+    public ApiResult(Integer code, String message, Object payload) {
         this.code = code;
         this.message = message;
         this.payload = payload;
     }
 
     public static ApiResult success(Object payload) {
-        return new ApiResult(true, "success", payload);
+        return new ApiResult(1, "success", payload);
     }
     public static ApiResult failure(String message) {
-        return new ApiResult(false, message, null);
+        return new ApiResult(0, message, null);
     }
 
     @Override
