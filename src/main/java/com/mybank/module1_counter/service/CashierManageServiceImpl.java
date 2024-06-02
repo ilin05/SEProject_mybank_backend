@@ -16,25 +16,37 @@ public class CashierManageServiceImpl implements CashierManageService {
 
     @Override
     public ApiResult getCashier() {
-        List<Integer> integerList = cashierManageMapper.selectAllCashier();
-        return ApiResult.success(integerList);
+        List<Cashier> CashierList = cashierManageMapper.selectAllCashier();
+        return ApiResult.success(CashierList);
     }
 
     @Override
     public ApiResult addCashier(Cashier cashier) {
-        int result = cashierManageMapper.insertCashier(cashier);
-        return ApiResult.success(cashier);
+        try {
+            cashierManageMapper.insertCashier(cashier);
+            return ApiResult.success(cashier.getCashierId());
+        } catch (Exception e) {
+            return ApiResult.failure("Error inserting cashier");
+        }
     }
 
     @Override
     public ApiResult modifyCashier(Cashier cashier) {
-        int result = cashierManageMapper.updateCashier(cashier);
-        return ApiResult.success(cashier);
+        try {
+            cashierManageMapper.updateCashier(cashier);
+            return ApiResult.success(null);
+        } catch (Exception e) {
+            return ApiResult.failure("Error modifying cashier");
+        }
     }
 
     @Override
     public ApiResult removeCashier(Integer cashierId) {
-        int result = cashierManageMapper.deleteCashier(cashierId);
-        return ApiResult.success(cashierId);
+        try {
+            cashierManageMapper.deleteCashier(cashierId);
+            return ApiResult.success(null);
+        } catch (Exception e) {
+            return ApiResult.failure("Error removing cashier");
+        }
     }
 }
