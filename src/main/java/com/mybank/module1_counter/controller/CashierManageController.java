@@ -1,6 +1,6 @@
 package com.mybank.module1_counter.controller;
 
-import com.mybank.module1_counter.service.CashierService;
+import com.mybank.module1_counter.service.CashierManageService;
 import com.mybank.module1_counter.entities.Cashier;
 import com.mybank.utils.ApiResult;
 import com.mybank.utils.JwtUtils;
@@ -13,13 +13,13 @@ import java.util.Map;
 @CrossOrigin
 @RestController
 @RequestMapping("/admin")
-public class CashierController {
+public class CashierManageController {
 
     private static final String adminUsername = "123456";
     private static final String adminPassword = "123456";
 
     @Autowired
-    private CashierService cashierService;
+    private CashierManageService cashierManageService;
 
     @PostMapping("/login")
     public ApiResult login(@RequestBody Map<String,String> loginRequest){
@@ -38,24 +38,24 @@ public class CashierController {
     // select
     @GetMapping("/cashier")
     public ApiResult getAllCashier() {
-        return cashierService.getCashier();
+        return cashierManageService.getCashier();
     }
 
     // insert
     @PostMapping("/cashier")
     public ApiResult addCashier(@RequestBody Cashier cashier){
-        return cashierService.addCashier(cashier);
+        return cashierManageService.addCashier(cashier);
     }
 
     // update
     @PutMapping("/cashier")
     public ApiResult updateCashier(@RequestBody Cashier cashier){
-        return cashierService.modifyCashier(cashier);
+        return cashierManageService.modifyCashier(cashier);
     }
 
     // delete
     @DeleteMapping("/cashier/{cashierId}")
     public ApiResult deleteCashier(@PathVariable int cashierId){
-        return cashierService.removeCashier(cashierId);
+        return cashierManageService.removeCashier(cashierId);
     }
 }

@@ -6,14 +6,14 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 @Mapper
-public interface CashierMapper {
+public interface CashierManageMapper {
 
     @Select("select cashier_id from cashier")
     public List<Integer> selectAllCashier();
 
 
     @Options(useGeneratedKeys=true, keyProperty="cashierId")
-    @Insert("insert into cashier(cashier_id) values (#{id})")
+    @Insert("insert into cashier(cashier_id) values (#{cashierId})")
     public int insertCashier(Cashier cashier);
 
 

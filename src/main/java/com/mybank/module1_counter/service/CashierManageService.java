@@ -3,7 +3,7 @@ package com.mybank.module1_counter.service;
 import com.mybank.module1_counter.entities.Cashier;
 import com.mybank.utils.ApiResult;
 
-public interface CashierService {
+public interface CashierManageService {
 
     // select
     ApiResult getCashier();

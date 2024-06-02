@@ -1,80 +1,28 @@
 package com.mybank.module1_counter.entities;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 
-/**
- * 交易（转账）
- */
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class TransactionInfo {
-    private Long transactionId;
+    private Integer transactionId;
 
-    private Long payerId;
-    private Long payeeId;
-    private Double amount;
+    private String cardId;
+    private String cardType;
+
     private LocalDateTime transactionTime;
-
+    private Double transactionAmount;
     private String transactionType;
+    private String transactionChannel;
 
-    public TransactionInfo() {
-    }
-
-    public Long getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(Long transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public Long getPayerId() {
-        return payerId;
-    }
-
-    public void setPayerId(Long payerId) {
-        this.payerId = payerId;
-    }
-
-    public Long getPayeeId() {
-        return payeeId;
-    }
-
-    public void setPayeeId(Long payeeId) {
-        this.payeeId = payeeId;
-    }
-
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
-
-    public LocalDateTime getTransactionTime() {
-        return transactionTime;
-    }
-
-    public void setTransactionTime(LocalDateTime transactionTime) {
-        this.transactionTime = transactionTime;
-    }
-
-    public String getTransactionType() {
-        return transactionType;
-    }
-
-    public void setTransactionType(String transactionType) {
-        this.transactionType = transactionType;
-    }
-
-    @Override
-    public String toString() {
-        return "TransactionInfo{" +
-                "transactionId=" + transactionId +
-                ", payerId=" + payerId +
-                ", payeeId=" + payeeId +
-                ", amount=" + amount +
-                ", transactionTime=" + transactionTime +
-                ", transactionType='" + transactionType + '\'' +
-                '}';
-    }
+    private String currency;
+    private String moneySource;
+    private String moneyGoes;
 }

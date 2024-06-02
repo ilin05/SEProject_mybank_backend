@@ -1,5 +1,8 @@
 package com.mybank.utils;
 
+import lombok.ToString;
+
+@ToString
 public class ApiResult {
     public Integer code;
     public String message;
@@ -24,14 +27,5 @@ public class ApiResult {
     }
     public static ApiResult failure(String message) {
         return new ApiResult(0, message, null);
-    }
-
-    @Override
-    public String toString() {
-        return "ApiResult{" +
-                "code=" + code +
-                ", message='" + message + '\'' +
-                ", payload=" + payload +
-                '}';
     }
 }
