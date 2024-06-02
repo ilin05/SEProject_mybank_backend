@@ -8,19 +8,21 @@ import java.util.List;
 @Mapper
 public interface CashierManageMapper {
 
-    @Select("select cashier_id from cashier")
-    public List<Integer> selectAllCashier();
+    @Select("select cashier_id, cashier_name, id_number, phone_number, address, privilege from cashier")
+    public List<Cashier> selectAllCashier();
 
 
     @Options(useGeneratedKeys=true, keyProperty="cashierId")
-    @Insert("insert into cashier(cashier_id) values (#{cashierId})")
+    @Insert("insert into cashier(cashier_name, id_number, phone_number, password, address, privilege) " +
+            "values (#{cashierName},#{idNumber},#{phoneNumber},#{password},#{address},#{privilege})")
     public int insertCashier(Cashier cashier);
 
 
-    @Update("update cashier set cashier_name=#{name} where cashier_id=#{id}")
+    @Update("update cashier set cashier_name=#{cashierName}, id_number=#{idNumber}, phone_number=#{phoneNumber}, " +
+            "address=#{address}, privilege=#{privilege} where cashier_id=#{cashierId}")
     public int updateCashier(Cashier cashier);
 
 
-    @Delete("delete from cashier where cashier_id=#{id}")
-    public int deleteCashier(Integer id);
+    @Delete("delete from cashier where cashier_id=#{cashierId}")
+    public int deleteCashier(Integer cashierId);
 }
