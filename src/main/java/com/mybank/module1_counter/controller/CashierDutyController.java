@@ -32,6 +32,7 @@ public class CashierDutyController {
 
     @GetMapping("/fixeddeposit")
     public ApiResult getDemandDeposit(@RequestParam String accountId){
+        //System.out.println(accountId);
         return cashierDutyService.showFixedDeposit(accountId);
     }
 
@@ -41,6 +42,7 @@ public class CashierDutyController {
         String password = (String) fixedDepositRequest.get("password");
         String depositType = (String) fixedDepositRequest.get("depositType");
         Double amount = (Double) fixedDepositRequest.get("amount");
+        System.out.printf(accountId,password,depositType,amount);
         return cashierDutyService.fixedDeposit(accountId, password, depositType, amount);
     }
 
@@ -52,6 +54,7 @@ public class CashierDutyController {
 
     @PostMapping("/transfer")
     public ApiResult transfer(@RequestBody TransferRequest txnRequest){
+        System.out.println(txnRequest);
         return cashierDutyService.transfer(txnRequest);
     }
 

@@ -31,7 +31,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
                 //Timestamp timestamp = new Timestamp(date.getTime());
                 //txn.setTransactionTime(timestamp);
                 txn.setTransactionTime(LocalDateTime.now());
-                System.out.println("Time: "+LocalDateTime.now());
+                //System.out.println("Time: "+LocalDateTime.now());
                 txn.setTransactionType("demand_deposit");
                 txn.setTransactionAmount(amount);
                 txn.setCurrency("CNY");
@@ -55,7 +55,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             int ok = cashierDutyMapper.judgePassword(accountId, password);
             if(ok == 1){
                 FixedDeposit fixedDeposit = new FixedDeposit();
-                fixedDeposit.setFixedDepositId(1);
+                fixedDeposit.setFixedDepositId(2);
                 fixedDeposit.setDepositTime(LocalDateTime.now());
                 fixedDeposit.setDepositAmount(amount);
                 fixedDeposit.setAccountId(accountId);
@@ -75,6 +75,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
     public ApiResult showFixedDeposit(String accountId) {
         try{
             List<FixedDeposit> fixedDeposits = cashierDutyMapper.showFixedDeposit(accountId);
+
             return ApiResult.success(fixedDeposits);
         } catch (Exception e){
             return ApiResult.failure("Error showDemandDeposit");
@@ -101,6 +102,8 @@ public class CashierDutyServiceImpl implements CashierDutyService {
                 LocalDateTime now = LocalDateTime.now();
                 TransactionInfo txn1 = new TransactionInfo();
                 TransactionInfo txn2 = new TransactionInfo();
+                txn1.setTransactionId(3);
+                txn2.setTransactionId(4);
                 txn1.setCardId(txnRequest.getCardId());
                 txn2.setCardId(txnRequest.getMoneyGoes());
                 txn1.setTransactionTime(now);
@@ -114,10 +117,10 @@ public class CashierDutyServiceImpl implements CashierDutyService {
                 txn1.setMoneyGoes(txnRequest.getMoneyGoes());
                 txn2.setMoneyGoes(txnRequest.getMoneyGoes());
                 txn1.setCurrency("CNY");
-                txn1.setCardType("saving_account");
+                txn1.setCardType("save");
                 txn1.setTransactionChannel("cashier");
                 txn2.setCurrency("CNY");
-                txn2.setCardType("saving_account");
+                txn2.setCardType("save");
                 txn2.setTransactionChannel("cashier");
                 cashierDutyMapper.insertTransaction(txn1);
                 cashierDutyMapper.insertTransaction(txn2);
@@ -139,12 +142,17 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             int ok = cashierDutyMapper.judgePassword(accountId, password);
             if(ok == 1){
                 TransactionInfo txn = new TransactionInfo();
+                txn.setTransactionId(6);
                 txn.setCardId(accountId);
                 txn.setTransactionTime(LocalDateTime.now());
-                txn.setTransactionType("withdraw_demand_deposit");
+                txn.setTransactionType("withdrawDemand");
                 txn.setTransactionAmount(amount);
                 txn.setMoneySource(accountId);
+                txn.setCurrency("CNY");
+                txn.setCardType("save");
+                txn.setTransactionChannel("cashier");
                 cashierDutyMapper.updateAccountBalance(accountId, -amount);
+                cashierDutyMapper.insertTransaction(txn);
                 return ApiResult.success(null);
             }else{
                 return ApiResult.failure("Password Error!");
@@ -160,15 +168,19 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             int ok = cashierDutyMapper.judgePassword(accountId, password);
             if(ok == 1){
                 TransactionInfo txn = new TransactionInfo();
+                txn.setTransactionId(5);
                 txn.setCardId(accountId);
                 txn.setTransactionTime(LocalDateTime.now());
-                txn.setTransactionType("withdraw_fixed_deposit");
+                txn.setTransactionType("withdrawFixedDeposit");
                 txn.setMoneySource(accountId);
-                txn.setTransactionAmount(amount);
+                txn.setCurrency("CNY");
+                txn.setCardType("save");
+                txn.setTransactionChannel("cashier");
                 Double transferAmount = cashierDutyMapper.getFixedDepositAmount(fixedDepositId) - amount;
+                txn.setTransactionAmount(transferAmount);
+                cashierDutyMapper.insertTransaction(txn);
                 cashierDutyMapper.updateAccountBalance(accountId, transferAmount);
                 cashierDutyMapper.deleteFixedDeposit(fixedDepositId);
-                cashierDutyMapper.insertTransaction(txn);
                 return ApiResult.success(null);
             }else{
                 return ApiResult.failure("Password Error!");
