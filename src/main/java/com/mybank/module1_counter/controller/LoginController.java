@@ -24,7 +24,7 @@ public class LoginController {
     public ApiResult adminLogin(@RequestBody Map<String,String> loginRequest){
         String username = loginRequest.get("adminUsername");
         String password = loginRequest.get("adminPassword");
-        if(!username.equals(ADMIN_USERNAME) || !password.equals(ADMIN_PASSWORD)){
+        if(!ADMIN_USERNAME.equals(username) || !ADMIN_PASSWORD.equals(password)){
             return ApiResult.failure("username/password incorrect");
         }
         Map<String,Object> claims = new HashMap<>();
