@@ -9,7 +9,6 @@ import com.mybank.utils.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,10 +20,15 @@ public class CashierDutyServiceImpl implements CashierDutyService {
     @Override
     public ApiResult demandDeposit(String accountId, String password, Double amount) {
         try{
+            SavingAccount account = cashierDutyMapper.showAccountInfo(accountId);
+            //System.out.println(account);
+            if(account.getDeleted() == 1 || account.getFreezeState() == 1 || account.getLossState() == 1){
+                return ApiResult.failure("Account current state error!");
+            }
             int ok = cashierDutyMapper.judgePassword(accountId, password);
             if(ok == 1){
                 TransactionInfo txn = new TransactionInfo();
-                txn.setTransactionId(1);
+                txn.setTransactionId(2);
                 txn.setCardId(accountId);
                 txn.setMoneyGoes(accountId);
                 //java.util.Date date = new java.util.Date();
@@ -38,6 +42,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
                 txn.setCardType("save");
                 txn.setTransactionChannel("cashier");
 
+                System.out.println(txn);
                 cashierDutyMapper.updateAccountBalance(accountId, amount);
                 cashierDutyMapper.insertTransaction(txn);
                 return ApiResult.success(null);
@@ -52,6 +57,10 @@ public class CashierDutyServiceImpl implements CashierDutyService {
     @Override
     public ApiResult fixedDeposit(String accountId, String password, String depositType, Double amount) {
         try{
+            SavingAccount account = cashierDutyMapper.showAccountInfo(accountId);
+            if(account.getDeleted() == 1 || account.getFreezeState() == 1 || account.getLossState() == 1){
+                return ApiResult.failure("Account current state error!");
+            }
             int ok = cashierDutyMapper.judgePassword(accountId, password);
             if(ok == 1){
                 FixedDeposit fixedDeposit = new FixedDeposit();
@@ -74,8 +83,11 @@ public class CashierDutyServiceImpl implements CashierDutyService {
     @Override
     public ApiResult showFixedDeposit(String accountId) {
         try{
+            SavingAccount account = cashierDutyMapper.showAccountInfo(accountId);
+            if(account.getDeleted() == 1 || account.getFreezeState() == 1 || account.getLossState() == 1){
+                return ApiResult.failure("Account current state error!");
+            }
             List<FixedDeposit> fixedDeposits = cashierDutyMapper.showFixedDeposit(accountId);
-
             return ApiResult.success(fixedDeposits);
         } catch (Exception e){
             return ApiResult.failure("Error showDemandDeposit");
@@ -90,13 +102,19 @@ public class CashierDutyServiceImpl implements CashierDutyService {
         } catch (Exception e) {
             return ApiResult.failure("Error showAccountInfo");
         }
-
         //return null;
     }
 
     @Override
     public ApiResult transfer(TransferRequest txnRequest) {
         try{
+            SavingAccount account = cashierDutyMapper.showAccountInfo(txnRequest.getCardId());
+            if(account.getDeleted() == 1 || account.getFreezeState() == 1 || account.getLossState() == 1){
+                return ApiResult.failure("Account current state error!");
+            }
+            if(account.getBalance() < txnRequest.getTransactionAmount()){
+                return ApiResult.failure("The balance is insufficient!");
+            }
             int ok = cashierDutyMapper.judgePassword(txnRequest.getCardId(), txnRequest.getPassword());
             if(ok == 1){
                 LocalDateTime now = LocalDateTime.now();
@@ -139,6 +157,13 @@ public class CashierDutyServiceImpl implements CashierDutyService {
     @Override
     public ApiResult withdrawDemandMoney(String accountId, String password, Double amount) {
         try{
+            SavingAccount account = cashierDutyMapper.showAccountInfo(accountId);
+            if(account.getDeleted() == 1 || account.getFreezeState() == 1 || account.getLossState() == 1){
+                return ApiResult.failure("Account current state error!");
+            }
+            if(account.getBalance() < amount){
+                return ApiResult.failure("The balance is insufficient!");
+            }
             int ok = cashierDutyMapper.judgePassword(accountId, password);
             if(ok == 1){
                 TransactionInfo txn = new TransactionInfo();
@@ -165,6 +190,10 @@ public class CashierDutyServiceImpl implements CashierDutyService {
     @Override
     public ApiResult withdrawFixedMoney(int fixedDepositId, String accountId, String password, Double amount) {
         try{
+            SavingAccount account = cashierDutyMapper.showAccountInfo(accountId);
+            if(account.getDeleted() == 1 || account.getFreezeState() == 1 || account.getLossState() == 1){
+                return ApiResult.failure("Account current state error!");
+            }
             int ok = cashierDutyMapper.judgePassword(accountId, password);
             if(ok == 1){
                 TransactionInfo txn = new TransactionInfo();

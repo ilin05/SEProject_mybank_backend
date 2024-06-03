@@ -33,7 +33,7 @@ public interface CashierDutyMapper {
     @Select("select * from fixed_deposit where account_id = #{accountId}")
     public List<FixedDeposit> showFixedDeposit(String accountId);
 
-    @Select("select account_id, customer_id, balance, state, open_time, open_amount from saving_account where account_id = #{accountId}")
+    @Select("select account_id, customer_id, balance, freeze_state, loss_state, deleted, open_time, open_amount from saving_account where account_id = #{accountId}")
     public SavingAccount showAccountInfo(String accountId);
 
     @Select("select count(*) from saving_account where account_id = #{accountId} and password=#{password}")

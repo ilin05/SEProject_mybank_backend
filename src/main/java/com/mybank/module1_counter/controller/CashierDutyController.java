@@ -26,7 +26,9 @@ public class CashierDutyController {
         String accountId = (String) demandDepositRequest.get("accountId");
         String password = (String) demandDepositRequest.get("password");
         Double amount = (Double) demandDepositRequest.get("amount");
-        //System.out.printf(accountId,password,amount);
+        System.out.println(accountId);
+        System.out.println(password);
+        System.out.println(amount);
         return cashierDutyService.demandDeposit(accountId, password, amount);
     }
 
