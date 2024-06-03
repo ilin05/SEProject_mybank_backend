@@ -7,6 +7,7 @@ import com.mybank.module1_counter.entities.TransactionInfo;
 import com.mybank.module1_counter.mapper.CashierDutyMapper;
 import com.mybank.module1_counter.queries.*;
 import com.mybank.utils.ApiResult;
+import com.mybank.utils.HashUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -236,6 +237,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             account.setAccountId(accountId);
             account.setCustomerId(updatedCustomerId);
             account.setBalance(account.getOpenAmount());
+            account.setPassword(HashUtils.md5Hash(account.getPassword()));
             cashierDutyMapper.insertAccount(account);
             return ApiResult.success(account);
 
@@ -318,6 +320,52 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             int lossStateRecordId=cashierDutyMapper.selectLossRecord(accountId);
             cashierDutyMapper.changeLossRecord(lossStateRecordId,LocalDateTime.now());
             return ApiResult.success(null);
+        }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return ApiResult.failure(e.getMessage());
+        }
+    }
+    @Override
+    @Transactional
+    public ApiResult closeAccount(String accountId, String password, String idNumber){
+        try{
+            SavingAccount account=cashierDutyMapper.selectAccount(accountId);
+            if(account==null) return ApiResult.failure("not exists");
+            if(account.getDeleted()) return ApiResult.failure("The card is already deleted");
+
+            if(cashierDutyMapper.isFrozen(accountId)) return ApiResult.failure("The card is now frozen");
+            if(cashierDutyMapper.isLost(accountId)) return ApiResult.failure("The card is now lost");
+            String hashedPassword = HashUtils.md5Hash(password);
+            if(!account.getIdNumber().equals(idNumber)) return ApiResult.failure("the idNumber dose not match account_id");
+            if(cashierDutyMapper.judgePassword(accountId,hashedPassword)==0){
+                return ApiResult.failure("password is wrong");
+            }
+            cashierDutyMapper.changeDeleteState(accountId,true);
+            return ApiResult.success(null);
+
+        }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return ApiResult.failure(e.getMessage());
+        }
+    }
+    @Override
+    @Transactional
+    public ApiResult modifyAccountPassword(String accountId, String oldPassword, String newPassword){
+        try{
+            SavingAccount account=cashierDutyMapper.selectAccount(accountId);
+            if(account==null) return ApiResult.failure("not exists");
+            if(account.getDeleted()) return ApiResult.failure("The card is already deleted");
+
+            if(cashierDutyMapper.isFrozen(accountId)) return ApiResult.failure("The card is now frozen");
+            if(cashierDutyMapper.isLost(accountId)) return ApiResult.failure("The card is now lost");
+            String hashedPassword = HashUtils.md5Hash(oldPassword);
+            if(cashierDutyMapper.judgePassword(accountId,hashedPassword)==0){
+                return ApiResult.failure(" old password is wrong");
+            }
+
+            cashierDutyMapper.changePassword(accountId,newPassword);
+            return ApiResult.success(null);
+
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return ApiResult.failure(e.getMessage());

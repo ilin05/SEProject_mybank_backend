@@ -28,5 +28,6 @@ public interface CashierDutyService {
     ApiResult unfreeze(String accountId);
     ApiResult reportLoss(String accountId);
     ApiResult reissue(String accountId);
-
+    ApiResult closeAccount(String accountId, String password, String idNumber);
+    ApiResult modifyAccountPassword(String accountId, String oldPassword, String newPassword);
 }

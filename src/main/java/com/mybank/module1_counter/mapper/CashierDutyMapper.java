@@ -112,5 +112,8 @@ public interface CashierDutyMapper {
     public Integer  selectLossRecord(String accountId);
     @Select("SELECT  COUNT(*) FROM saving_account WHERE customer_id=#{customerId}")
     public Integer selectAccountCount(int customerId);
-
+    @Update("UPDATE saving_account SET deleted=#{isDeleted} WHERE account_id=#{accountId}")
+    public int changeDeleteState(String accountId, boolean isDeleted);
+    @Update("UPDATE saving_account SET password=#{password} WHERE account_id=#{accountId}")
+    public int changePassword(String accountId, String password);
 }

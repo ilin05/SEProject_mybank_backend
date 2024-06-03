@@ -73,6 +73,10 @@ public class CashierDutyController {
     public ApiResult addAccount(@RequestBody SavingAccount account) {
         return cashierDutyService.openAccount(account);
     }
+    @PostMapping("/closeAccount")
+    public ApiResult closeAccount(@RequestBody Map<String,String> closeAccoountInfo) {
+        return cashierDutyService.closeAccount(closeAccoountInfo.get("accountId"),closeAccoountInfo.get("password"),closeAccoountInfo.get("idNumber"));
+    }
     @PostMapping("/freeze")
     public ApiResult freezeAccount(@RequestBody FreezeInfo freezeInfo) {
         System.out.println(freezeInfo.getUnfreezeTime());
@@ -89,6 +93,13 @@ public class CashierDutyController {
     @PostMapping("/reissue")
     public ApiResult reissueAccount(@RequestBody Map<String,String> reissueRequest) {
         return cashierDutyService.reissue(reissueRequest.get("accountId"));
+    }
+    @PostMapping("/modifyPassword")
+    public ApiResult modifyPassword(@RequestBody Map<String,String> changePasswordRequest) {
+        String accountId = (String) changePasswordRequest.get("accountId");
+        String oldPassword = (String) changePasswordRequest.get("oldPassword");
+        String newPassword = (String) changePasswordRequest.get("newPassword");
+        return cashierDutyService.modifyAccountPassword(accountId, oldPassword, newPassword);
     }
 
 }
