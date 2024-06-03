@@ -13,38 +13,46 @@ public class CashierInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Claims claims = null;
-        try {
-            String jwt = request.getHeader("Authorization");
-            claims = JwtUtils.parseJwt(jwt);
-        } catch (Exception e) {
-            ApiResult notLogin = ApiResult.failure("NOT_LOGIN");
-            String notLoginString = new Gson().toJson(notLogin);
-            response.getWriter().write(notLoginString);
-            return false;
-        }
-        String role = (String) claims.get("role");
-        if(!"cashier".equals(role)) {
-            ApiResult notCashier = ApiResult.failure("NOT_CASHIER");
-            String notCashierString = new Gson().toJson(notCashier);
-            response.getWriter().write(notCashierString);
-            return false;
-        }
-        String privilege = (String) claims.get("privilege");
-        String url = request.getRequestURL().toString();
-        /*
-            A: 存取款、转账、挂失补发、冻结解冻、开户
-            B: 存取款、转账、挂失补发、冻结解冻
-            C: 存取款、转账
-         */
-        if("A".equals(privilege)) {
-            return true;
-        } else if("B".equals(privilege)) {
-            ;
-        } else if("C".equals(privilege)) {
-            ;
-        }
-        return false;
+//        Claims claims = null;
+//        try {
+//            String jwt = request.getHeader("Authorization");
+//            claims = JwtUtils.parseJwt(jwt);
+//        } catch (Exception e) {
+//            ApiResult notLogin = ApiResult.failure("NOT_LOGIN");
+//            String notLoginString = new Gson().toJson(notLogin);
+//            response.getWriter().write(notLoginString);
+//            return false;
+//        }
+//        String role = (String) claims.get("role");
+//        if(!"cashier".equals(role)) {
+//            ApiResult notCashier = ApiResult.failure("NOT_CASHIER");
+//            String notCashierString = new Gson().toJson(notCashier);
+//            response.getWriter().write(notCashierString);
+//            return false;
+//        }
+//
+//        String privilege = (String) claims.get("privilege");
+//        String url = request.getRequestURL().toString();
+//        /*
+//            A: 存取款、转账、挂失补发、冻结解冻、开户
+//            B: 存取款、转账、挂失补发、冻结解冻
+//            C: 存取款、转账
+//         */
+//        if("A".equals(privilege)) {
+//            return true;
+//        } else if("B".equals(privilege)) {
+//            if(url.contains("openAccount")) return false;
+//            return true;
+//        } else if("C".equals(privilege)) {
+//            if(url.contains("openAccount")) return false;
+//            if(url.contains("freeze")) return false;
+//            if(url.contains("unfreeze")) return false;
+//            if(url.contains("reportLoss")) return false;
+//            if(url.contains("reissue")) return false;
+//            return true;
+//        }
+//        return false;
+        return true;
     }
 
     @Override

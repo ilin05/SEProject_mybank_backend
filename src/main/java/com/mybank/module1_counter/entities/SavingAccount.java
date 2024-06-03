@@ -26,5 +26,7 @@ public class SavingAccount {
     private LocalDateTime openTime;
     private Double openAmount;
 
-    private Boolean state;
+    private Boolean freezeState;
+    private Boolean lossState;
+    private Boolean deleted;
 }

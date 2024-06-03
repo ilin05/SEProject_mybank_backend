@@ -17,13 +17,15 @@ create table customer
 
 create table saving_account
 (
-    account_id  nchar(19) primary key,
-    customer_id int            NOT NULL,
-    password    varchar(20)    NOT NULL,
-    balance     decimal(20, 2) NOT NULL,
-    state       varchar(10)    NOT NULL,
-    open_time   datetime       NOT NULL,
-    open_amount decimal(15, 2) NOT NULL,
+    account_id   nchar(19) primary key,
+    customer_id  int            NOT NULL,
+    password     varchar(20)    NOT NULL,
+    balance      decimal(20, 2) NOT NULL,
+    freeze_state BOOL DEFAULT false,
+    loss_state   BOOL DEFAULT false,
+    deleted      BOOL DEFAULT false,
+    open_time    datetime       NOT NULL,
+    open_amount  decimal(15, 2) NOT NULL,
     foreign key (customer_id) references customer (customer_id)
         on delete cascade
         on update cascade,
@@ -32,7 +34,7 @@ create table saving_account
 
 create table cashier
 (
-    cashier_id   int primary key,
+    cashier_id   int primary key auto_increment,
     cashier_name varchar(20)        NOT NULL,
     id_number    varchar(20) unique NOT NULL,
     phone_number varchar(15)        NOT NULL,
@@ -57,7 +59,7 @@ create table fixed_deposit
 
 create table transaction
 (
-    transaction_id      int primary key,
+    transaction_id      int primary key auto_increment,
     card_id             nchar(19)      NOT NULL,
     card_type           varchar(5)     NOT NULL,
     transaction_time    datetime       NOT NULL,
@@ -70,13 +72,24 @@ create table transaction
     check ( transaction_amount >= 0)
 );
 
-create table state_record
+create table freeze_state_record
 (
-    state_record_id int primary key,
-    account_id      nchar(19)   NOT NULL,
-    freeze_time     datetime    NOT NULL,
-    unfreeze_time   datetime    NOT NULL,
-    freeze_reason   varchar(50) NOT NULL,
+    freeze_state_record_id int primary key auto_increment,
+    account_id             nchar(19)   NOT NULL,
+    freeze_time            datetime    NOT NULL,
+    unfreeze_time          datetime    NOT NULL,
+    freeze_reason          varchar(50) NOT NULL,
+    foreign key (account_id) references saving_account (account_id)
+        on delete cascade
+        on update cascade
+);
+
+create table loss_state_record
+(
+    loss_state_record_id int primary key auto_increment,
+    account_id           nchar(19) NOT NULL,
+    loss_time            datetime  NOT NULL,
+    reissue_time         datetime DEFAULT NULl,
     foreign key (account_id) references saving_account (account_id)
         on delete cascade
         on update cascade
