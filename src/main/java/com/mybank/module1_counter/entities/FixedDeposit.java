@@ -19,7 +19,6 @@ public class FixedDeposit {
     private Double depositAmount;
 
     // deposit type ??
-    private Double ratio;
-    private Integer period;
+    private String depositType;
     private Boolean isRenewal;
 }
