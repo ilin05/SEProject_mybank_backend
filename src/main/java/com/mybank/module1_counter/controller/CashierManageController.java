@@ -15,25 +15,8 @@ import java.util.Map;
 @RequestMapping("/admin")
 public class CashierManageController {
 
-    private static final String adminUsername = "123456";
-    private static final String adminPassword = "123456";
-
     @Autowired
     private CashierManageService cashierManageService;
-
-    @PostMapping("/login")
-    public ApiResult login(@RequestBody Map<String,String> loginRequest){
-        String username = loginRequest.get("username");
-        String password = loginRequest.get("password");
-        if(username.equals(adminUsername) && password.equals(adminPassword)){
-            Map<String,Object> claims = new HashMap<>();
-            claims.put("role","admin");
-            claims.put("username",username);
-            String jwt = JwtUtils.generateJwt(claims);
-            return ApiResult.success(jwt);
-        }
-        else return ApiResult.failure("username/password incorrect");
-    }
 
     // select
     @GetMapping("/cashier")

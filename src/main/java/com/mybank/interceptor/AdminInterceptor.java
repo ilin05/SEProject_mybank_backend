@@ -16,6 +16,9 @@ public class AdminInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String url = request.getRequestURL().toString();
+        System.out.println(url);
+
         Claims claims = null;
         try {
             String jwt = request.getHeader("Authorization");

@@ -11,19 +11,9 @@ import java.util.List;
 @Mapper
 public interface CashierDutyMapper {
 
-    @Select("SELECT sa.account_id AS accountId, " +
-            "sa.customer_id AS customerId, " +
-            "c.customer_name AS customerName, " +
-            "c.id_number AS idNumber, " +
-            "c.address AS address, " +
-            "c.phone_number AS phoneNumber, " +
-            "sa.balance AS balance, " +
-            "sa.open_time AS openTime, " +
-            "sa.open_amount AS openAmount, " +
-            "sa.freeze_state AS freezeState, " +
-            "sa.loss_state AS lossState, "+
-            "sa.deleted AS deleted "+
-            "FROM saving_account sa JOIN customer c ON sa.customer_id = c.customer_id "+
+    @Select("SELECT account_id,customer_id,customer_name,id_number,address,phone_number," +
+            "balance,open_time,open_amount,freeze_state,loss_state,deleted " +
+            "FROM saving_account NATURAL JOIN customer "+
             "WHERE account_id=#{accountId}")
     public SavingAccount selectAccount(String accountId);
 
@@ -58,8 +48,6 @@ public interface CashierDutyMapper {
 
     @Select("select * from fixed_deposit where account_id = #{accountId}")
     public List<FixedDeposit> showFixedDeposit(String accountId);
-
-
 
 
 
