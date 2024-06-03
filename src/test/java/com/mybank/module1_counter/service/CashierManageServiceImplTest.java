@@ -23,4 +23,6 @@ class CashierManageServiceImplTest {
         cashier.setPrivilege('A');
         cashierManageService.addCashier(cashier);
     }
+
+
 }

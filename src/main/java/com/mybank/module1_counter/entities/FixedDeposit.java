@@ -1,6 +1,7 @@
 package com.mybank.module1_counter.entities;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class FixedDeposit {
 
     private Integer fixedDepositId;
@@ -20,7 +22,4 @@ public class FixedDeposit {
     private Double ratio;
     private Integer period;
     private Boolean isRenewal;
-
-    public FixedDeposit() {
-    }
 }

@@ -12,7 +12,7 @@ public class JwtUtils {
     private static final String SECRET_KEY = "mybank";
     private static final Long EXPIRE_TIME = 3600*1000L;
 
-    public static String generateJwt(Map<String, Object> claims) {
+    public static String generateJwt(Map<String,Object> claims) {
         return Jwts.builder()
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .setClaims(claims)
@@ -29,7 +29,7 @@ public class JwtUtils {
         try {
             JwtUtils.parseJwt(jwt);
             return true;
-        } catch (JwtException e) {
+        } catch (Exception e) {
             return false;
         }
     }

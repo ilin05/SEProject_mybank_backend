@@ -27,8 +27,8 @@ public class CashierManageController {
         String password = loginRequest.get("password");
         if(username.equals(adminUsername) && password.equals(adminPassword)){
             Map<String,Object> claims = new HashMap<>();
+            claims.put("role","admin");
             claims.put("username",username);
-            claims.put("password",password);
             String jwt = JwtUtils.generateJwt(claims);
             return ApiResult.success(jwt);
         }
