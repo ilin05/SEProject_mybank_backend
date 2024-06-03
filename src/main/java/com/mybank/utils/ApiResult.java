@@ -22,6 +22,7 @@ public class ApiResult {
         this.payload = payload;
     }
 
+
     public static ApiResult success(Object payload) {
         return new ApiResult(1, "success", payload);
     }

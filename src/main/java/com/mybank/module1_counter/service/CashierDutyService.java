@@ -1,16 +1,24 @@
 package com.mybank.module1_counter.service;
 
-import com.mybank.module1_counter.entities.*;
+import com.mybank.module1_counter.queries.FixedDepositRequest;
+import com.mybank.module1_counter.queries.TransferRequest;
 import com.mybank.utils.ApiResult;
 
 public interface CashierDutyService {
 
-    ApiResult demandDeposit(TransactionInfo txn);
+    ApiResult demandDeposit(String accountId, String password, Double amount);
 
-    ApiResult fixedDeposit(TransactionInfo txn);
+    //ApiResult fixedDeposit(FixedDepositRequest fixedDepositRequest);
+    ApiResult fixedDeposit(String accountId, String password, String depositType, Double amount);
 
-    ApiResult showDeposit(String cardId);
+    ApiResult showFixedDeposit(String accountId);
 
-    ApiResult withdrawMoney(TransactionInfo txn);
+    ApiResult showAccountInfo(String accountId);
+
+    ApiResult withdrawDemandMoney(String accountId, String password, Double amount);
+
+    ApiResult withdrawFixedMoney(int fixedDepositId, String accountId, String password, Double amount);
+
+    ApiResult transfer(TransferRequest txnRequest);
 
 }
