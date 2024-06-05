@@ -33,10 +33,10 @@ public class CashierDutyController {
         return cashierDutyService.openAccount(account);
     }
     @PostMapping("/closeAccount")
-    public ApiResult closeAccount(@RequestBody Map<String,String> closeAccoountInfo) {
-        String accountId = (String) closeAccoountInfo.get("accountId");
-        String password = (String) closeAccoountInfo.get("password");
-        String idNumber = (String) closeAccoountInfo.get("idNumber");
+    public ApiResult closeAccount(@RequestBody Map<String,String> closeAccountInfo) {
+        String accountId = (String) closeAccountInfo.get("accountId");
+        String password = (String) closeAccountInfo.get("password");
+        String idNumber = (String) closeAccountInfo.get("idNumber");
         return cashierDutyService.closeAccount(accountId, password, idNumber);
     }
 

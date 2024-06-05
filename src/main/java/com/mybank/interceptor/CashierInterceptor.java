@@ -46,13 +46,14 @@ public class CashierInterceptor implements HandlerInterceptor {
         if("A".equals(privilege)) {
             return true;
         } else if("B".equals(privilege)) {
-            if(url.contains("openAccount")||url.contains("closeAccount")) {
+            if(url.contains("openAccount") || url.contains("closeAccount")) {
                 writeFailure(response, "NOT_PRIVILEGE");
                 return false;
             }
             return true;
         } else if("C".equals(privilege)) {
-            if(url.contains("openAccount") || url.contains("freeze") || url.contains("unfreeze")
+            if(url.contains("openAccount") || url.contains("closeAccount")
+                    || url.contains("freeze") || url.contains("unfreeze")
                     || url.contains("reportLoss") || url.contains("reissue")) {
                 writeFailure(response, "NOT_PRIVILEGE");
                 return false;

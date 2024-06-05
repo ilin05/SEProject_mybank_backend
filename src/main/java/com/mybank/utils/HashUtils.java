@@ -8,8 +8,7 @@ public class HashUtils {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] hashBytes = md.digest(input.getBytes());
-            String hashString = new String(hashBytes, StandardCharsets.ISO_8859_1);
-            return hashString;
+            return new String(hashBytes, StandardCharsets.ISO_8859_1);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
