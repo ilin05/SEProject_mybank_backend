@@ -8,6 +8,10 @@ import java.util.List;
 @Mapper
 public interface CashierManageMapper {
 
+    @Select("select cashier_id, cashier_name, id_number, phone_number, address, privilege from cashier " +
+            "where cashier_id=#{cashierId} and password=#{password}")
+    public Cashier getOneCashier(int cashierId, String password);
+
     @Select("select cashier_id, cashier_name, id_number, phone_number, address, privilege from cashier")
     public List<Cashier> selectAllCashier();
 

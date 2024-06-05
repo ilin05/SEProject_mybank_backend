@@ -58,7 +58,7 @@ create table cashier
 
 create table fixed_deposit
 (
-    fixed_deposit_id int primary key,
+    fixed_deposit_id int primary key auto_increment,
     account_id       nchar(19)      NOT NULL,
     deposit_time     datetime       NOT NULL,
     deposit_amount   decimal(15, 2) NOT NULL,

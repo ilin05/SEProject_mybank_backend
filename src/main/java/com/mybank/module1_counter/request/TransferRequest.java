@@ -1,4 +1,4 @@
-package com.mybank.module1_counter.queries;
+package com.mybank.module1_counter.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
