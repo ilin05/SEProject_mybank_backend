@@ -17,8 +17,8 @@ public interface CashierManageMapper {
 
 
     @Options(useGeneratedKeys=true, keyProperty="cashierId")
-    @Insert("insert into cashier(cashier_name, id_number, phone_number, address, privilege) " +
-            "values (#{cashierName},#{idNumber},#{phoneNumber},#{address},#{privilege})")
+    @Insert("insert into cashier(cashier_name, id_number, phone_number, password, address, privilege) " +
+            "values (#{cashierName},#{idNumber},#{phoneNumber},#{password},#{address},#{privilege})")
     public int insertCashier(Cashier cashier);
 
 

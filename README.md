@@ -12,5 +12,4 @@ spring版本3.2.6，目前引入的主要依赖项有：
 - mysql driver
 - spring jdbc api
 - mybatis framework
-
-
+- json web token

@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @NoArgsConstructor
-public class FreezeInfo {
+public class FreezeRequest {
     private String accountId;
     private String reason;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime unfreezeTime;
-
+    private String password;
 }

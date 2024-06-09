@@ -3,6 +3,7 @@ package com.mybank.module1_counter.controller;
 import com.mybank.module1_counter.entities.Cashier;
 import com.mybank.module1_counter.mapper.CashierManageMapper;
 import com.mybank.utils.ApiResult;
+import com.mybank.utils.HashUtils;
 import com.mybank.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,8 +23,8 @@ public class LoginController {
 
     @PostMapping("/admin/login")
     public ApiResult adminLogin(@RequestBody Map<String,String> loginRequest){
-        String username = loginRequest.get("adminUsername");
-        String password = loginRequest.get("adminPassword");
+        String username = loginRequest.get("username");
+        String password = loginRequest.get("password");
         if(!ADMIN_USERNAME.equals(username) || !ADMIN_PASSWORD.equals(password)){
             return ApiResult.failure("username/password incorrect");
         }
@@ -42,7 +43,8 @@ public class LoginController {
     public ApiResult cashierLogin(@RequestBody Map<String,Object> loginRequest){
         int cashierId = (int) loginRequest.get("cashierId");
         String password = (String) loginRequest.get("password");
-        Cashier cashier = cashierManageMapper.getOneCashier(cashierId, password);
+        String hashPassword = HashUtils.md5Hash(password);
+        Cashier cashier = cashierManageMapper.getOneCashier(cashierId, hashPassword);
         if(cashier == null){
             return ApiResult.failure("cashierId/password incorrect");
         }

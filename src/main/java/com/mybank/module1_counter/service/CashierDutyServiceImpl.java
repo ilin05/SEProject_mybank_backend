@@ -1,9 +1,7 @@
 package com.mybank.module1_counter.service;
 
-import com.mybank.module1_counter.entities.FixedDeposit;
-import com.mybank.module1_counter.request.FreezeInfo;
-import com.mybank.module1_counter.entities.SavingAccount;
-import com.mybank.module1_counter.entities.TransactionInfo;
+import com.mybank.module1_counter.entities.*;
+import com.mybank.module1_counter.request.FreezeRequest;
 import com.mybank.module1_counter.mapper.CashierDutyMapper;
 import com.mybank.module1_counter.request.*;
 import com.mybank.utils.ApiResult;
@@ -14,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CashierDutyServiceImpl implements CashierDutyService {
@@ -32,7 +32,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
     @Override
     @Transactional
-    public ApiResult demandDeposit(String accountId, String password, Double amount) {
+    public ApiResult demandDeposit(String accountId, String password, double amount) {
         try{
             if(cashierDutyMapper.isDelete(accountId)) return ApiResult.failure("The card is already deleted");
             if(cashierDutyMapper.isFrozen(accountId)) return ApiResult.failure("The card is now frozen");
@@ -43,7 +43,6 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             if(ok != 1) return ApiResult.failure("Password Error!");
 
             TransactionInfo txn = new TransactionInfo();
-            txn.setTransactionId(1);
             txn.setCardId(accountId);
             txn.setMoneyGoes(accountId);
             txn.setTransactionTime(LocalDateTime.now());
@@ -64,7 +63,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
     @Override
     @Transactional
-    public ApiResult fixedDeposit(String accountId, String password, String depositType, Double amount) {
+    public ApiResult fixedDeposit(String accountId, String password, String depositType, double amount) {
         try{
             if(cashierDutyMapper.isDelete(accountId)) return ApiResult.failure("The card is already deleted");
             if(cashierDutyMapper.isFrozen(accountId)) return ApiResult.failure("The card is now frozen");
@@ -79,7 +78,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             fixedDeposit.setDepositAmount(amount);
             fixedDeposit.setAccountId(accountId);
             fixedDeposit.setDepositType(depositType);
-            System.out.println(fixedDeposit);
+
             cashierDutyMapper.insertFixedDeposit(fixedDeposit);
             return ApiResult.success(fixedDeposit);
         } catch (Exception e) {
@@ -155,7 +154,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
     @Override
     @Transactional
-    public ApiResult withdrawDemandMoney(String accountId, String password, Double amount) {
+    public ApiResult withdrawDemandMoney(String accountId, String password, double amount) {
         try{
             if(cashierDutyMapper.isDelete(accountId)) return ApiResult.failure("The card is already deleted");
             if(cashierDutyMapper.isFrozen(accountId)) return ApiResult.failure("The card is now frozen");
@@ -168,7 +167,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             TransactionInfo txn = new TransactionInfo();
             txn.setCardId(accountId);
             txn.setTransactionTime(LocalDateTime.now());
-            txn.setTransactionType("withdrawDemand");
+            txn.setTransactionType("取款");
             txn.setTransactionAmount(amount);
             txn.setMoneySource(accountId);
             txn.setCurrency("CNY");
@@ -186,7 +185,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
     @Override
     @Transactional
-    public ApiResult withdrawFixedMoney(int fixedDepositId, String accountId, String password, Double amount) {
+    public ApiResult withdrawFixedMoney(int fixedDepositId, String accountId, String password, double amount) {
         try{
             if(cashierDutyMapper.isDelete(accountId)) return ApiResult.failure("The card is already deleted");
             if(cashierDutyMapper.isFrozen(accountId)) return ApiResult.failure("The card is now frozen");
@@ -196,21 +195,33 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             int ok = cashierDutyMapper.judgePassword(accountId, hashPassword);
             if(ok != 1) return ApiResult.failure("Password Error!");
 
-            TransactionInfo txn = new TransactionInfo();
-            txn.setTransactionId(5);
-            txn.setCardId(accountId);
-            txn.setTransactionTime(LocalDateTime.now());
-            txn.setTransactionType("withdrawFixedDeposit");
-            txn.setMoneySource(accountId);
-            txn.setCurrency("CNY");
-            txn.setCardType("save");
-            txn.setTransactionChannel("cashier");
-            Double transferAmount = cashierDutyMapper.getFixedDepositAmount(fixedDepositId) - amount;
-            txn.setTransactionAmount(transferAmount);
-            cashierDutyMapper.insertTransaction(txn);
-            cashierDutyMapper.updateAccountBalance(accountId, transferAmount);
+            Double fixedDepositAmount = cashierDutyMapper.getFixedDepositAmount(fixedDepositId);
+
+            TransactionInfo txn1 = new TransactionInfo();
+            txn1.setCardId(accountId);
+            txn1.setTransactionTime(LocalDateTime.now());
+            txn1.setTransactionType("定期转活期");
+            txn1.setMoneyGoes(accountId);
+            txn1.setCurrency("CNY");
+            txn1.setCardType("save");
+            txn1.setTransactionChannel("cashier");
+            txn1.setTransactionAmount(fixedDepositAmount);
+            cashierDutyMapper.insertTransaction(txn1);
+
+            TransactionInfo txn2 = new TransactionInfo();
+            txn2.setCardId(accountId);
+            txn2.setTransactionTime(LocalDateTime.now());
+            txn2.setTransactionType("取款");
+            txn2.setMoneySource(accountId);
+            txn2.setCurrency("CNY");
+            txn2.setCardType("save");
+            txn2.setTransactionChannel("cashier");
+            txn2.setTransactionAmount(amount);
+            cashierDutyMapper.insertTransaction(txn2);
+
+            cashierDutyMapper.updateAccountBalance(accountId, fixedDepositAmount-amount);
             cashierDutyMapper.deleteFixedDeposit(fixedDepositId);
-            return ApiResult.success(txn);
+            return ApiResult.success(txn2);
 
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -251,16 +262,21 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
     @Override
     @Transactional
-    public ApiResult freeze(FreezeInfo freezeInfo) {
+    public ApiResult freeze(FreezeRequest freezeRequest) {
         try{
-            SavingAccount account=cashierDutyMapper.selectAccount(freezeInfo.getAccountId());
+            String accountId = freezeRequest.getAccountId();
+            SavingAccount account=cashierDutyMapper.selectAccount(accountId);
             if(account==null) return ApiResult.failure("not exists");
             if(account.getDeleted()) return ApiResult.failure("The card is already deleted");
 
-            if(cashierDutyMapper.isFrozen(freezeInfo.getAccountId())) return ApiResult.failure("already frozen");
+            String hashPassword = HashUtils.md5Hash(freezeRequest.getPassword());
+            int ok = cashierDutyMapper.judgePassword(accountId, hashPassword);
+            if(ok != 1) return ApiResult.failure("Password Error!");
+            if(cashierDutyMapper.isFrozen(accountId)) return ApiResult.failure("already frozen");
 
-            cashierDutyMapper.changeFreezeState(freezeInfo.getAccountId(),true);
-            cashierDutyMapper.insertFreezeRecord(freezeInfo.getAccountId(),LocalDateTime.now(),freezeInfo.getUnfreezeTime(),freezeInfo.getReason());
+            cashierDutyMapper.changeFreezeState(accountId,true);
+            cashierDutyMapper.insertFreezeRecord(accountId,LocalDateTime.now(),
+                    freezeRequest.getUnfreezeTime(), freezeRequest.getReason());
             return ApiResult.success(null);
 
         }catch (Exception e){
@@ -271,12 +287,31 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
     @Override
     @Transactional
-    public ApiResult unfreeze(String accountId) {
+    public ApiResult getFrozenRecord(String accountId) {
+        try{
+            SavingAccount account = cashierDutyMapper.selectAccount(accountId);
+            if(account==null) return ApiResult.failure("not exists");
+            if(account.getDeleted()) return ApiResult.failure("The card is already deleted");
+
+            if(!account.getFreezeState()) return ApiResult.failure("not frozen");
+            Map<String, String> freezeRecordInfo = cashierDutyMapper.selectFreezeRecordAllInfo(accountId);
+            return ApiResult.success(freezeRecordInfo);
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return ApiResult.failure(e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public ApiResult unfreeze(String accountId, String password) {
         try{
             SavingAccount account=cashierDutyMapper.selectAccount(accountId);
             if(account==null) return ApiResult.failure("not exists");
             if(account.getDeleted()) return ApiResult.failure("The card is already deleted");
 
+            int ok = cashierDutyMapper.judgePassword(accountId, HashUtils.md5Hash(password));
+            if(ok != 1) return ApiResult.failure("Password Error!");
             if(!cashierDutyMapper.isFrozen(accountId)) return ApiResult.failure("not frozen");
 
             cashierDutyMapper.changeFreezeState(accountId,false);
@@ -285,18 +320,20 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             return ApiResult.success(null);
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return  ApiResult.failure(e.getMessage());
+            return ApiResult.failure(e.getMessage());
         }
     }
 
     @Override
     @Transactional
-    public ApiResult reportLoss(String accountId) {
+    public ApiResult reportLoss(String accountId, String password) {
         try{
             SavingAccount account=cashierDutyMapper.selectAccount(accountId);
             if(account==null) return ApiResult.failure("not exists");
             if(account.getDeleted()) return ApiResult.failure("The card is already deleted");
 
+            int ok = cashierDutyMapper.judgePassword(accountId, HashUtils.md5Hash(password));
+            if(ok != 1) return ApiResult.failure("Password Error!");
             if(cashierDutyMapper.isLost(accountId)) return ApiResult.failure("already lost");
 
             cashierDutyMapper.changeLossState(accountId,true);
@@ -310,13 +347,16 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
     @Override
     @Transactional
-    public ApiResult reissue(String accountId) {
+    public ApiResult reissue(String accountId, String password) {
         try{
             SavingAccount account=cashierDutyMapper.selectAccount(accountId);
             if(account==null) return ApiResult.failure("not exists");
             if(account.getDeleted()) return ApiResult.failure("The card is already deleted");
 
+            int ok = cashierDutyMapper.judgePassword(accountId, HashUtils.md5Hash(password));
+            if(ok != 1) return ApiResult.failure("Password Error!");
             if(!cashierDutyMapper.isLost(accountId)) return ApiResult.failure("not lost");
+
             cashierDutyMapper.changeLossState(accountId,false);
             int lossStateRecordId=cashierDutyMapper.selectLossRecord(accountId);
             cashierDutyMapper.changeLossRecord(lossStateRecordId,LocalDateTime.now());
@@ -375,4 +415,30 @@ public class CashierDutyServiceImpl implements CashierDutyService {
         }
     }
 
+
+    public ApiResult getFixedDepositTypes() {
+        List<FixedDepositType> fixedDepositTypes = cashierDutyMapper.selectFixedDepositType();
+        return ApiResult.success(fixedDepositTypes);
+    }
+
+    public ApiResult getCustomerInfo(String idNumber) {
+        Customer customer = cashierDutyMapper.selectOneCustomer(idNumber);
+        if(customer==null) return ApiResult.failure("not exists");
+
+        Map<String,Object> customerInfo = new HashMap<>();
+        customerInfo.put("customerInfo",customer);
+        List<String> accountIds = cashierDutyMapper.selectAccountIdList(customer.getCustomerId());
+        customerInfo.put("accountIdList",accountIds);
+
+        return ApiResult.success(customerInfo);
+    }
+
+    public ApiResult updateCustomerInfo(Customer customer) {
+        try {
+            cashierDutyMapper.updateCustomer(customer);
+            return ApiResult.success(null);
+        } catch (Exception e) {
+            return ApiResult.failure(e.getMessage());
+        }
+    }
 }
