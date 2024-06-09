@@ -109,9 +109,16 @@ create table cashier
 
 
 # 定期存款 利率表 初始化
+# 存款名称 持续月份 年利率
 insert into fixed_deposit_type
-values ('A', 3, 0.002);
+values ('A', 3, 0.0115);
 insert into fixed_deposit_type
-values ('B', 6, 0.003);
+values ('B', 6, 0.0135);
 insert into fixed_deposit_type
-values ('C', 12, 0.004);
+values ('C', 12, 0.0145);
+insert into fixed_deposit_type
+values ('D', 24, 0.0165);
+insert into fixed_deposit_type
+values ('E', 36, 0.0195);
+insert into fixed_deposit_type
+values ('F', 60, 0.0200);

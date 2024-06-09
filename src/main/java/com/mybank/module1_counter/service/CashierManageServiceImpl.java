@@ -26,8 +26,7 @@ public class CashierManageServiceImpl implements CashierManageService {
         try {
             String idNumber = cashier.getIdNumber();
             String lastSix = idNumber.substring(idNumber.length() - 6);
-            System.out.println(lastSix);
-            cashier.setPassword(HashUtils.md5Hash(lastSix));
+            cashier.setPassword(HashUtils.md5Hash(HashUtils.sha256Hash(lastSix)));
             cashierManageMapper.insertCashier(cashier);
             cashier.setPassword(null);
             return ApiResult.success(cashier);

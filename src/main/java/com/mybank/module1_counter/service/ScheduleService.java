@@ -14,7 +14,7 @@ import java.util.List;
 @Component
 public class ScheduleService {
     // 活期年利率
-    private static final double demandDepositYearRate = 0.0035;
+    private static final double demandDepositYearRate = 0.0020;
 
     @Autowired
     private ScheduleMapper scheduleMapper;
@@ -73,7 +73,8 @@ public class ScheduleService {
 
                 // 到期，计算利息
                 double amount = fixedDeposit.getDepositAmount();
-                double interest = fixedDeposit.getDepositRate() * amount;
+                double depositDuration = fixedDeposit.getDepositDuration();
+                double interest = fixedDeposit.getDepositRate()/12 * depositDuration * amount;
                 String accountId = fixedDeposit.getAccountId();
                 Integer fixedDepositId = fixedDeposit.getFixedDepositId();
 

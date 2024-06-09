@@ -19,12 +19,13 @@ import java.util.Map;
 public class LoginController {
 
     private static final String ADMIN_USERNAME = "123456";
-    private static final String ADMIN_PASSWORD = "123456";
+    private static final String ADMIN_PASSWORD = HashUtils.sha256Hash("123456");
 
     @PostMapping("/admin/login")
     public ApiResult adminLogin(@RequestBody Map<String,String> loginRequest){
         String username = loginRequest.get("username");
         String password = loginRequest.get("password");
+
         if(!ADMIN_USERNAME.equals(username) || !ADMIN_PASSWORD.equals(password)){
             return ApiResult.failure("username/password incorrect");
         }
