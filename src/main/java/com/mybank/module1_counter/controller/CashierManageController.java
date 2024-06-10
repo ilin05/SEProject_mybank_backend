@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
-@CrossOrigin
+@CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE,RequestMethod.OPTIONS})
 @RestController
 @RequestMapping("/admin")
 public class CashierManageController {
@@ -34,8 +34,8 @@ public class CashierManageController {
     }
 
     // delete
-    @DeleteMapping("/cashier/{cashierId}")
-    public ApiResult deleteCashier(@PathVariable int cashierId){
+    @DeleteMapping("/cashier")
+    public ApiResult deleteCashier(@RequestParam int cashierId){
         return cashierManageService.removeCashier(cashierId);
     }
 }
