@@ -1,16 +1,28 @@
 package com.mybank.utils;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
 public class JwtUtils {
-    private static final String SECRET_KEY = "mybank";
+    private static final String SECRET_KEY;
     private static final Long EXPIRE_TIME = 3600*1000L;
+
+    static {
+        try {
+            KeyGenerator kenGen = KeyGenerator.getInstance("HmacSHA256");
+            SecretKey secretKey = kenGen.generateKey();
+            SECRET_KEY = Base64.getEncoder().encodeToString(secretKey.getEncoded());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static String generateJwt(Map<String,Object> claims) {
         return Jwts.builder()

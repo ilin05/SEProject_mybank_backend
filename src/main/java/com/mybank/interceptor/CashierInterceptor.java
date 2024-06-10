@@ -9,11 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.IOException;
 
 public class CashierInterceptor implements HandlerInterceptor {
 
-    public void writeFailure(HttpServletResponse response, String message) throws IOException {
+    public void writeFailure(HttpServletResponse response, String message) throws Exception {
         ApiResult notLogin = ApiResult.failure(message);
         String notLoginString = new Gson().toJson(notLogin);
         response.getWriter().write(notLoginString);
@@ -37,23 +36,22 @@ public class CashierInterceptor implements HandlerInterceptor {
 
         String privilege = (String) claims.get("privilege");
         String url = request.getRequestURL().toString();
-        System.out.println(url);
         /*
             A: 存取款、转账、挂失补发、冻结解冻、开户销户、更改支付密码
-            B: 存取款、转账、挂失补发、冻结解冻
-            C: 存取款、转账
+            B: 存取款、转账、挂失补发、冻结解冻、开户
+            C: 存取款、转账、挂失补发
          */
         if("A".equals(privilege)) {
             return true;
         } else if("B".equals(privilege)) {
-            if(url.contains("openAccount")||url.contains("closeAccount")) {
+            if(url.contains("closeAccount") || url.contains("modifyPassword")) {
                 writeFailure(response, "NOT_PRIVILEGE");
                 return false;
             }
             return true;
         } else if("C".equals(privilege)) {
-            if(url.contains("openAccount") || url.contains("freeze") || url.contains("unfreeze")
-                    || url.contains("reportLoss") || url.contains("reissue")) {
+            if(url.contains("openAccount") || url.contains("closeAccount") || url.contains("modifyPassword")
+                    || url.contains("freeze") || url.contains("unfreeze")) {
                 writeFailure(response, "NOT_PRIVILEGE");
                 return false;
             }

@@ -3,12 +3,9 @@ package com.mybank.module1_counter.controller;
 import com.mybank.module1_counter.service.CashierManageService;
 import com.mybank.module1_counter.entities.Cashier;
 import com.mybank.utils.ApiResult;
-import com.mybank.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @CrossOrigin
 @RestController

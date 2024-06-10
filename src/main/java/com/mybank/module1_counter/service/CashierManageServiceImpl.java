@@ -3,6 +3,7 @@ package com.mybank.module1_counter.service;
 import com.mybank.module1_counter.entities.Cashier;
 import com.mybank.module1_counter.mapper.CashierManageMapper;
 import com.mybank.utils.ApiResult;
+import com.mybank.utils.HashUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +24,12 @@ public class CashierManageServiceImpl implements CashierManageService {
     @Override
     public ApiResult addCashier(Cashier cashier) {
         try {
+            String idNumber = cashier.getIdNumber();
+            String lastSix = idNumber.substring(idNumber.length() - 6);
+            cashier.setPassword(HashUtils.md5Hash(HashUtils.sha256Hash(lastSix)));
             cashierManageMapper.insertCashier(cashier);
-            return ApiResult.success(cashier.getCashierId());
+            cashier.setPassword(null);
+            return ApiResult.success(cashier);
         } catch (Exception e) {
             return ApiResult.failure("Error inserting cashier");
         }
