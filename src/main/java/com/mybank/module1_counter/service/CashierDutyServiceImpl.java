@@ -251,7 +251,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             account.setPassword(HashUtils.md5Hash(account.getPassword()));
             cashierDutyMapper.insertAccount(account);
             SavingAccount newAccount = cashierDutyMapper.selectAccount(accountId);
-            return ApiResult.success(newAccount);
+            return ApiResult.success(newAccount.getAccountId());
 
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
