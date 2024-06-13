@@ -249,3 +249,62 @@ CREATE TABLE IF NOT EXISTS wh_operator
     control_rate     BOOLEAN     NOT NULL DEFAULT 0
 );
 
+
+# xin yong ka
+create table auditors
+(
+    auditor_id int          not null auto_increment,
+    name       varchar(31)  not null,
+    password   varchar(255) not null,
+    phone      varchar(13)  not null,
+    can_review bool         not null,
+    primary key (auditor_id)
+) engine = innodb
+  charset = utf8mb4;
+
+create table creditcards
+(
+    card_id         varchar(23)    not null,
+    customer_id     int            not null,
+    deposit_card_id varchar(19)    not null,
+    password        varchar(255)   not null,
+    status          int            not null,
+    credit_limit    decimal(10, 2) not null,
+    consumption     decimal(10, 2) not null default 0,
+    primary key (card_id),
+    foreign key (customer_id) references customer (customer_id) on delete cascade on update cascade,
+    foreign key (deposit_card_id) references saving_account (account_id) on delete restrict on update cascade,
+    check (credit_limit >= 0 and consumption >= 0 and consumption <= creditcards.credit_limit)
+) engine = innodb
+  charset = utf8mb4;
+
+create table applications
+(
+    appl_id         int            not null auto_increment,
+    status          int            not null,
+    customer_id     int            not null,
+    credit_card_id  varchar(23),
+    deposit_card_id varchar(19)    not null,
+    credit_limit    decimal(10, 2) not null,
+    password        varchar(255)   not null,
+    time            timestamp      not null default current_timestamp,
+    comment         varchar(255),
+    primary key (appl_id),
+    foreign key (customer_id) references customer (customer_id) on delete cascade on update cascade,
+    foreign key (credit_card_id) references creditcards (card_id) on delete restrict on update cascade,
+    foreign key (deposit_card_id) references saving_account(account_id) on delete restrict on update cascade
+) engine = innodb
+  charset = utf8mb4;
+
+create table reviews
+(
+    review_id  int       not null auto_increment,
+    appl_id    int       not null,
+    auditor_id int       not null,
+    approved   bool      not null,
+    time       timestamp not null default current_timestamp,
+    primary key (review_id),
+    foreign key (appl_id) references applications (appl_id) on delete cascade on update cascade,
+    foreign key (auditor_id) references auditors (auditor_id) on delete cascade on update cascade
+) engine = innodb
+  charset = utf8mb4;
