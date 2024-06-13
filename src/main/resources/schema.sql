@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS customer
 
 CREATE TABLE IF NOT EXISTS saving_account
 (
-    account_id   NCHAR(19) PRIMARY KEY,
+    account_id   VARCHAR(19) PRIMARY KEY,
     customer_id  INT            NOT NULL,
     password     VARCHAR(20)    NOT NULL,
     balance      DECIMAL(20, 2) NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS fixed_deposit_type
 CREATE TABLE IF NOT EXISTS fixed_deposit
 (
     fixed_deposit_id INT PRIMARY KEY AUTO_INCREMENT,
-    account_id       NCHAR(19)      NOT NULL,
+    account_id       VARCHAR(19)      NOT NULL,
     deposit_time     DATETIME       NOT NULL,
     deposit_amount   DECIMAL(20, 2) NOT NULL,
     deposit_type     VARCHAR(10)    NOT NULL,
@@ -61,22 +61,22 @@ CREATE TABLE IF NOT EXISTS fixed_deposit
 CREATE TABLE IF NOT EXISTS transaction
 (
     transaction_id      INT PRIMARY KEY AUTO_INCREMENT,
-    card_id             NCHAR(19)      NOT NULL,
+    card_id             VARCHAR(25)      NOT NULL,
     card_type           VARCHAR(15)    NOT NULL,
     transaction_time    DATETIME       NOT NULL,
     transaction_amount  DECIMAL(20, 2) NOT NULL,
     transaction_type    VARCHAR(20)    NOT NULL,
     transaction_channel VARCHAR(20) DEFAULT NULL,
     currency            NCHAR(3)    DEFAULT 'CNY',
-    money_source        NCHAR(19)   DEFAULT NULL,
-    money_goes          NCHAR(19)   DEFAULT NULL,
+    money_source        VARCHAR(25)   DEFAULT NULL,
+    money_goes          VARCHAR(25)   DEFAULT NULL,
     CHECK ( transaction_amount >= 0)
 );
 
 CREATE TABLE IF NOT EXISTS freeze_state_record
 (
     freeze_state_record_id INT PRIMARY KEY AUTO_INCREMENT,
-    account_id             NCHAR(19)   NOT NULL,
+    account_id             VARCHAR(25)   NOT NULL,
     freeze_time            DATETIME    NOT NULL,
     unfreeze_time          DATETIME    NOT NULL,
     freeze_reason          VARCHAR(50) NOT NULL,
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS freeze_state_record
 CREATE TABLE IF NOT EXISTS loss_state_record
 (
     loss_state_record_id INT PRIMARY KEY AUTO_INCREMENT,
-    account_id           NCHAR(19) NOT NULL,
+    account_id           VARCHAR(25) NOT NULL,
     loss_time            DATETIME  NOT NULL,
     reissue_time         DATETIME DEFAULT NULL,
     FOREIGN KEY (account_id) REFERENCES saving_account (account_id)
@@ -110,9 +110,9 @@ CREATE TABLE IF NOT EXISTS cashier
 
 # 定期存款 利率表 初始化
 # 存款名称 持续月份 年利率
-INSERT INTO fixed_deposit_type (deposit_type, deposit_duration, deposit_rate)
+/*INSERT INTO fixed_deposit_type (deposit_type, deposit_duration, deposit_rate)
 VALUES ('A', 3, 0.0115), ('B', 6, 0.0135), ('C', 12, 0.0145),
-       ('D', 24, 0.0165), ('E', 36, 0.0195), ('F', 60, 0.0200);
+       ('D', 24, 0.0165), ('E', 36, 0.0195), ('F', 60, 0.0200);*/
 
 # 贷款
 CREATE TABLE IF NOT EXISTS reviewer
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS loan_application
     loan_id                   INT PRIMARY KEY AUTO_INCREMENT,
     loan_amount               DECIMAL(20, 2) NOT NULL,
     customer_id               INT            NOT NULL,
-    account_id                NCHAR(19)      NOT NULL,
+    account_id                VARCHAR(25)      NOT NULL,
     status                    VARCHAR(10)    DEFAULT 'PENDING',    -- 'PENDING', 'REJECTED', 'APPROVED', 'CONFIRMED'
     reviewer_id               INT,
     interest_rate             DECIMAL(5, 2),
@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS repayment
 (
     repayment_id     INT PRIMARY KEY AUTO_INCREMENT,
     loan_id          INT            NOT NULL,
-    account_id       NCHAR(19),
+    account_id       VARCHAR(19),
     repayment_amount DECIMAL(20, 2) NOT NULL,
     repayment_date   DATE           NOT NULL,
     FOREIGN KEY (account_id) REFERENCES saving_account (account_id)
@@ -168,38 +168,24 @@ CREATE TABLE IF NOT EXISTS repayment
         ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS transaction
-(
-    transaction_id      INT PRIMARY KEY AUTO_INCREMENT,
-    card_id             NCHAR(19)                  NOT NULL,
-    card_type           VARCHAR(15)                NOT NULL,
-    transaction_time    DATETIME                   NOT NULL,
-    transaction_amount  DECIMAL(20, 2)             NOT NULL,
-    transaction_type    ENUM ('INCOME', 'EXPENSE') NOT NULL,
-    transaction_channel VARCHAR(20) DEFAULT NULL,
-    currency            NCHAR(3)    DEFAULT 'CNY',
-    money_source        NCHAR(19)   DEFAULT NULL,
-    money_goes          NCHAR(19)   DEFAULT NULL,
-    CHECK (transaction_amount >= 0)
-);
 
-CREATE TABLE IF NOT EXISTS creditcards
-(
-    card_id         VARCHAR(23)    NOT NULL,
-    customer_id     INT            NOT NULL,
-    deposit_card_id VARCHAR(19)    NOT NULL,
-    password        VARCHAR(255)   NOT NULL,
-    status          INT            NOT NULL,
-    credit_limit    DECIMAL(10, 2) NOT NULL,
-    consumption     DECIMAL(10, 2) NOT NULL DEFAULT 0,
-    PRIMARY KEY (card_id),
-    FOREIGN KEY (customer_id) REFERENCES customer (customer_id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    -- foreign key (deposit_card_id) references cards (card_id) on delete restrict on update cascade,
-    CHECK (credit_limit >= 0 AND consumption >= 0 AND consumption <= creditcards.credit_limit)
-) ENGINE=InnoDB
-  CHARSET=utf8mb4;
+# CREATE TABLE IF NOT EXISTS creditcards
+# (
+#     card_id         VARCHAR(23)    NOT NULL,
+#     customer_id     INT            NOT NULL,
+#     deposit_card_id VARCHAR(19)    NOT NULL,
+#     password        VARCHAR(255)   NOT NULL,
+#     status          INT            NOT NULL,
+#     credit_limit    DECIMAL(10, 2) NOT NULL,
+#     consumption     DECIMAL(10, 2) NOT NULL DEFAULT 0,
+#     PRIMARY KEY (card_id),
+#     FOREIGN KEY (customer_id) REFERENCES customer (customer_id)
+#         ON DELETE CASCADE
+#         ON UPDATE CASCADE,
+#     -- foreign key (deposit_card_id) references cards (card_id) on delete restrict on update cascade,
+#     CHECK (credit_limit >= 0 AND consumption >= 0 AND consumption <= creditcards.credit_limit)
+# ) ENGINE=InnoDB
+#   CHARSET=utf8mb4;
 
 # 外汇
 CREATE TABLE IF NOT EXISTS wh_currency
