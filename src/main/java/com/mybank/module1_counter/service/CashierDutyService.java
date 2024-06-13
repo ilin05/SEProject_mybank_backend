@@ -21,7 +21,7 @@ public interface CashierDutyService {
     // 活期存款、定期存款
     ApiResult demandDeposit(String accountId, String password, double amount);
 
-    ApiResult fixedDeposit(String accountId, String password, String depositType, double amount);
+    ApiResult fixedDeposit(String accountId, String password, String depositType, double amount,boolean isRenewal);
 
     // 活期取款、定期取款
     ApiResult withdrawDemandMoney(String accountId, String password, double amount);

@@ -64,7 +64,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
     @Override
     @Transactional
-    public ApiResult fixedDeposit(String accountId, String password, String depositType, double amount) {
+    public ApiResult fixedDeposit(String accountId, String password, String depositType, double amount,boolean isRenewal) {
         try{
             if(cashierDutyMapper.isDelete(accountId)) return ApiResult.failure("The card is already deleted");
             if(cashierDutyMapper.isFrozen(accountId)) return ApiResult.failure("The card is now frozen");
@@ -79,7 +79,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             fixedDeposit.setDepositAmount(amount);
             fixedDeposit.setAccountId(accountId);
             fixedDeposit.setDepositType(depositType);
-
+            fixedDeposit.setIsRenewal(isRenewal);
             cashierDutyMapper.insertFixedDeposit(fixedDeposit);
             return ApiResult.success(fixedDeposit);
         } catch (Exception e) {
