@@ -289,7 +289,7 @@ public class UserService {
 
         // 减去未偿还的贷款金额
         BigDecimal outstandingLoans = loanApplicationRepository.findByCustomerId(customerId).stream()
-                .filter(loan -> loan.getStatus() == CONFIRMED)
+                .filter(loan -> loan.getStatus().equals(CONFIRMED))
                 .map(LoanApplication::getLoanAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
