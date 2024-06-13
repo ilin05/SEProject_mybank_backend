@@ -1,4 +1,4 @@
-package com.mybank.interceptor;
+package com.mybank.module1_counter.interceptor;
 
 import com.google.gson.Gson;
 import com.mybank.utils.ApiResult;
