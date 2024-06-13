@@ -55,10 +55,14 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
             cashierDutyMapper.updateAccountBalance(accountId, amount);
             cashierDutyMapper.insertTransaction(txn);
+            List<Integer> transactionIds = cashierDutyMapper.selectTransactionIdList(accountId);
+            Integer transactionId = transactionIds.get(transactionIds.size()-1);
+            txn.setTransactionId(transactionId);
+            //System.out.println(transactionId);
             return ApiResult.success(txn);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure("Error demand deposit");
+            return ApiResult.failure("活期存款失败");
         }
     }
 
@@ -81,10 +85,13 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             fixedDeposit.setDepositType(depositType);
 
             cashierDutyMapper.insertFixedDeposit(fixedDeposit);
+            List<FixedDeposit> fixedDeposits = cashierDutyMapper.showFixedDeposit(accountId);
+            Integer fixedDepositId = fixedDeposits.get(fixedDeposits.size()-1).getFixedDepositId();
+            fixedDeposit.setFixedDepositId(fixedDepositId);
             return ApiResult.success(fixedDeposit);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure("Error fixed deposit");
+            return ApiResult.failure("定期存款失败");
         }
     }
 
@@ -148,11 +155,16 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             cashierDutyMapper.insertTransaction(txn2);
             cashierDutyMapper.updateAccountBalance(txnRequest.getCardId(), -txnRequest.getTransactionAmount());
             cashierDutyMapper.updateAccountBalance(txnRequest.getMoneyGoes(), txnRequest.getTransactionAmount());
+
+            List<Integer> transactionIds = cashierDutyMapper.selectTransactionIdList(accountId);
+            Integer transactionId = transactionIds.get(transactionIds.size()-1);
+            txn1.setTransactionId(transactionId-1);
+
             return ApiResult.success(txn1);
 
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure("Error transaction");
+            return ApiResult.failure("转账失败");
         }
     }
 
@@ -182,6 +194,10 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             txn.setTransactionChannel("cashier");
             cashierDutyMapper.updateAccountBalance(accountId, -amount);
             cashierDutyMapper.insertTransaction(txn);
+
+            List<Integer> transactionIds = cashierDutyMapper.selectTransactionIdList(accountId);
+            Integer transactionId = transactionIds.get(transactionIds.size()-1);
+            txn.setTransactionId(transactionId);
             return ApiResult.success(txn);
 
         } catch (Exception e) {
@@ -214,8 +230,11 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             txn1.setCurrency("CNY");
             txn1.setCardType("save");
             txn1.setTransactionChannel("cashier");
-            txn1.setTransactionAmount(fixedDepositAmount);
+            txn1.setTransactionAmount(fixedDepositAmount - amount);
             cashierDutyMapper.insertTransaction(txn1);
+            List<Integer> transactionIds = cashierDutyMapper.selectTransactionIdList(accountId);
+            Integer transactionId = transactionIds.get(transactionIds.size()-1);
+            txn1.setTransactionId(transactionId);
 
             TransactionInfo txn2 = new TransactionInfo();
             txn2.setCardId(accountId);
@@ -230,11 +249,12 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
             cashierDutyMapper.updateAccountBalance(accountId, fixedDepositAmount-amount);
             cashierDutyMapper.deleteFixedDeposit(fixedDepositId);
-            return ApiResult.success(txn2);
+
+            return ApiResult.success(txn1);
 
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure("Error withdraw fixed deposit");
+            return ApiResult.failure("定期取款失败");
         }
     }
 
@@ -264,7 +284,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure("Error open account");
+            return ApiResult.failure("开户失败");
         }
     }
 
