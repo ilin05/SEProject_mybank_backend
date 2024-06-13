@@ -14,7 +14,7 @@ public class BillRowMapper implements RowMapper<Bill> {
         bill.setBillId(rs.getString("transaction_id"));
         bill.setCreditCardId(rs.getString("card_id"));
         bill.setConsumption(rs.getBigDecimal("transaction_amount"));
-        bill.setType(Bill.PaymentType.getType(rs.getInt("transaction_type")));
+        bill.setType(Bill.PaymentType.getType(rs.getString("transaction_type")));
         bill.setTime(rs.getObject("transaction_time", java.time.LocalDateTime.class));
         return bill;
     }
