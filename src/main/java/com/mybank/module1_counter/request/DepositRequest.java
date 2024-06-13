@@ -14,4 +14,5 @@ public class DepositRequest {
     String password;
     String depositType;
     Double amount;
+    Boolean isRenewal;
 }

@@ -11,6 +11,7 @@ import com.mybank.utils.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 @CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE,RequestMethod.OPTIONS})
@@ -59,8 +60,9 @@ public class CashierDutyController {
         String accountId = fixedDepositRequest.getAccountId();
         String password = fixedDepositRequest.getPassword();
         String depositType = fixedDepositRequest.getDepositType();
+        Boolean isRenewal = fixedDepositRequest.getIsRenewal();
         double amount = fixedDepositRequest.getAmount();
-        return cashierDutyService.fixedDeposit(accountId, password, depositType, amount);
+        return cashierDutyService.fixedDeposit(accountId, password, depositType, amount,isRenewal);
     }
 
     // 转账
