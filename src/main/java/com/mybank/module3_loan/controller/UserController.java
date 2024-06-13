@@ -148,7 +148,7 @@ public class UserController {
     }
 
     @PostMapping("/application/credit")
-    public ResponseEntity<BigDecimal> getAvailableCreditLimit(@PathVariable Long customerId) {
+    public ResponseEntity<BigDecimal> getAvailableCreditLimit(@RequestParam Long customerId) {
         BigDecimal availableCreditLimit = userService.calculateAvailableCreditLimit(customerId);
         return ResponseEntity.ok(availableCreditLimit);
     }

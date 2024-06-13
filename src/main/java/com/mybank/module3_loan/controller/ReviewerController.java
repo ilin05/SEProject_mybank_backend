@@ -1,6 +1,7 @@
 package com.mybank.module3_loan.controller;
 
 import com.mybank.module3_loan.model.Customer;
+import com.mybank.module3_loan.model.CustomerFinancialSummary;
 import com.mybank.module3_loan.model.LoanApplication;
 import com.mybank.module3_loan.model.SavingAccount;
 import com.mybank.module3_loan.service.ReviewerService;
@@ -20,8 +21,8 @@ public class ReviewerController {
     private ReviewerService reviewerService;
 
     @PostMapping("/detail")
-    public ResponseEntity<com.example.loan.model.CustomerFinancialSummary> getCustomerFinancialSummary(@RequestParam Long customerId) {
-        com.example.loan.model.CustomerFinancialSummary summary = reviewerService.getCustomerFinancialSummary(customerId);
+    public ResponseEntity<CustomerFinancialSummary> getCustomerFinancialSummary(@RequestParam Long customerId) {
+        CustomerFinancialSummary summary = reviewerService.getCustomerFinancialSummary(customerId);
         return ResponseEntity.ok(summary);
     }
 

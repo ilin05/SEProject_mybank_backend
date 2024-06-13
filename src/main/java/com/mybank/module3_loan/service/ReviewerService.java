@@ -169,13 +169,13 @@ public class ReviewerService {
         return customer.getAssets(); // Assuming assets can be used as collateral
     }
 
-    public com.example.loan.model.CustomerFinancialSummary getCustomerFinancialSummary(Long customerId) {
+    public CustomerFinancialSummary getCustomerFinancialSummary(Long customerId) {
         BigDecimal monthlyNetIncome = calculateMonthlyNetIncome(customerId);
         long monthlyTransactionCount = calculateMonthlyTransactionCount(customerId);
         BigDecimal totalSavings = getTotalSavings(customerId);
         BigDecimal totalCreditCardDebt = getTotalCreditCardDebt(customerId);
         BigDecimal availableCollateral = getAvailableCollateral(customerId);
 
-        return new com.example.loan.model.CustomerFinancialSummary(monthlyNetIncome, monthlyTransactionCount, totalSavings, totalCreditCardDebt, availableCollateral);
+        return new CustomerFinancialSummary(monthlyNetIncome, monthlyTransactionCount, totalSavings, totalCreditCardDebt, availableCollateral);
     }
 }
