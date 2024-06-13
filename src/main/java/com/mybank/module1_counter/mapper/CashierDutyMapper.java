@@ -126,7 +126,7 @@ public interface CashierDutyMapper {
 
     // 修改客户信息
     @Update("update customer set customer_name=#{customerName},phone_number=#{phoneNumber}," +
-            "address=#{address} where id_number=#{idNumber}")
+            "address=#{address}, internet_bank_open=#{internetBankOpen} where id_number=#{idNumber}")
     public int updateCustomer(Customer customer);
 
     @Select("select transaction_id from transaction where card_id=#{accountId}")

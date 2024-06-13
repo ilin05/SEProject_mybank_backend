@@ -4,6 +4,7 @@ import com.mybank.module1_counter.entities.*;
 import com.mybank.module1_counter.request.FreezeRequest;
 import com.mybank.module1_counter.mapper.CashierDutyMapper;
 import com.mybank.module1_counter.request.*;
+import com.mybank.module5_foreign.back.WHCommonFunctions;
 import com.mybank.utils.ApiResult;
 import com.mybank.utils.HashUtils;
 import org.springframework.beans.factory.annotation.Autowired;
