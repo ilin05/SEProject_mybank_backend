@@ -6,7 +6,6 @@ import com.mybank.module1_counter.mapper.CashierDutyMapper;
 import com.mybank.module1_counter.request.*;
 import com.mybank.utils.ApiResult;
 import com.mybank.utils.HashUtils;
-import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
