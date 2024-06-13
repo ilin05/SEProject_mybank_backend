@@ -13,11 +13,47 @@ import java.util.List;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 @RestController
-@RequestMapping("/reviewer")
+@RequestMapping("/home/examine")
 public class ReviewerController {
 
     @Autowired
     private ReviewerService reviewerService;
+
+    @PostMapping("/detail")
+    public ResponseEntity<com.example.loan.model.CustomerFinancialSummary> getCustomerFinancialSummary(@RequestParam Long customerId) {
+        com.example.loan.model.CustomerFinancialSummary summary = reviewerService.getCustomerFinancialSummary(customerId);
+        return ResponseEntity.ok(summary);
+    }
+
+    @GetMapping("/customer/{customerId}/monthlyNetIncome")
+    public ResponseEntity<BigDecimal> getMonthlyNetIncome(@PathVariable Long customerId) {
+        BigDecimal monthlyNetIncome = reviewerService.calculateMonthlyNetIncome(customerId);
+        return ResponseEntity.ok(monthlyNetIncome);
+    }
+
+    @GetMapping("/customer/{customerId}/monthlyTransactionCount")
+    public ResponseEntity<Long> getMonthlyTransactionCount(@PathVariable Long customerId) {
+        long transactionCount = reviewerService.calculateMonthlyTransactionCount(customerId);
+        return ResponseEntity.ok(transactionCount);
+    }
+
+    @GetMapping("/customer/{customerId}/totalSavings")
+    public ResponseEntity<BigDecimal> getTotalSavings(@PathVariable Long customerId) {
+        BigDecimal totalSavings = reviewerService.getTotalSavings(customerId);
+        return ResponseEntity.ok(totalSavings);
+    }
+
+    @GetMapping("/customer/{customerId}/totalCreditCardDebt")
+    public ResponseEntity<BigDecimal> getTotalCreditCardDebt(@PathVariable Long customerId) {
+        BigDecimal totalCreditCardDebt = reviewerService.getTotalCreditCardDebt(customerId);
+        return ResponseEntity.ok(totalCreditCardDebt);
+    }
+
+    @GetMapping("/customer/{customerId}/availableCollateral")
+    public ResponseEntity<BigDecimal> getAvailableCollateral(@PathVariable Long customerId) {
+        BigDecimal availableCollateral = reviewerService.getAvailableCollateral(customerId);
+        return ResponseEntity.ok(availableCollateral);
+    }
 
     @PostMapping("/reviewLoanApplication")
     public ResponseEntity<String> reviewLoanApplication(

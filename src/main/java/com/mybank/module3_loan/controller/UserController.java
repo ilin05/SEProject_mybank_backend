@@ -58,7 +58,7 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    //@GetMapping("/customer/{customerId}/accounts")
+    //@GetMapping("/customer/{customerId}/accounts") sbmg
     @PostMapping("/application/card")
     public ResponseEntity<List<SavingAccount>> getSavingAccountsByCustomerId(@RequestParam Long customerId) {
         List<SavingAccount> accounts = userService.findSavingAccountsByCustomerId(customerId);
@@ -141,10 +141,10 @@ public class UserController {
         return ResponseEntity.ok(creditLimit);
     }
 
-    @PostMapping("/confirmLoan")
-    public ResponseEntity<Void> confirmLoan(@RequestParam Long loanApplicationId) {
-        userService.confirmLoan(loanApplicationId);
-        return ResponseEntity.ok().build();
+    @PostMapping("/withdraw/confirm")
+    public ResponseEntity<String> confirmLoan(@RequestParam Long loanId) {
+        userService.confirmLoan(loanId);
+        return ResponseEntity.ok("success");
     }
 
     @PostMapping("/application/credit")

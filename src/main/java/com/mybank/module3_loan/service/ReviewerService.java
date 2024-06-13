@@ -1,12 +1,7 @@
 package com.mybank.module3_loan.service;
 
-import com.mybank.module3_loan.model.Customer;
-import com.mybank.module3_loan.model.LoanApplication;
-import com.mybank.module3_loan.model.SavingAccount;
-import com.mybank.module3_loan.repository.CustomerRepository;
-import com.mybank.module3_loan.repository.LoanApplicationRepository;
-import com.mybank.module3_loan.repository.SavingAccountRepository;
-import com.mybank.module3_loan.repository.TransactionRepository;
+import com.mybank.module3_loan.model.*;
+import com.mybank.module3_loan.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReviewerService {
@@ -30,8 +26,8 @@ public class ReviewerService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-//    @Autowired
-//    private CreditCardRepository creditCardRepository;
+    @Autowired
+    private CreditCardRepository creditCardRepository;
 
     @Autowired
     private UserService userService;
@@ -114,5 +110,72 @@ public class ReviewerService {
 
     public List<SavingAccount> getSavingAccounts(Long customerId) {
         return savingAccountRepository.findByCustomerId(customerId);
+    }
+
+    public BigDecimal calculateMonthlyNetIncome(Long customerId) {
+        List<Transaction> transactions = getTransactionsByCustomerId(customerId);
+
+        BigDecimal totalIncome = transactions.stream()
+                .filter(transaction -> transaction.getCardId().equals(transaction.getMoneyGoes()))
+                .map(Transaction::getTransactionAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalExpenses = transactions.stream()
+                .filter(transaction -> transaction.getCardId().equals(transaction.getMoneySource()))
+                .map(Transaction::getTransactionAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return totalIncome.subtract(totalExpenses);
+    }
+
+    public long calculateMonthlyTransactionCount(Long customerId) {
+        List<Transaction> transactions = getTransactionsByCustomerId(customerId);
+
+        return transactions.stream()
+                .map(transaction -> transaction.getTransactionTime().withDayOfMonth(1))
+                .distinct()
+                .count();
+    }
+
+    private List<Transaction> getTransactionsByCustomerId(Long customerId) {
+        List<SavingAccount> accounts = savingAccountRepository.findByCustomerId(customerId);
+        List<String> accountIds = accounts.stream()
+                .map(SavingAccount::getAccountId)
+                .collect(Collectors.toList());
+
+        return transactionRepository.findByCardIdIn(accountIds);
+    }
+
+    public BigDecimal getTotalSavings(Long customerId) {
+        List<SavingAccount> savingAccounts = savingAccountRepository.findByCustomerId(customerId);
+        return savingAccounts.stream()
+                .map(savingAccount -> BigDecimal.valueOf(savingAccount.getBalance()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public BigDecimal getTotalCreditCardDebt(Long customerId) {
+        List<CreditCard> creditCards = creditCardRepository.findByCustomerId(customerId);
+        return creditCards.stream()
+                .map(CreditCard::getConsumption)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
+    public BigDecimal getAvailableCollateral(Long customerId) {
+        Customer customer = customerRepository.findById(customerId).orElse(null);
+        if (customer == null) {
+            return BigDecimal.ZERO;
+        }
+        return customer.getAssets(); // Assuming assets can be used as collateral
+    }
+
+    public com.example.loan.model.CustomerFinancialSummary getCustomerFinancialSummary(Long customerId) {
+        BigDecimal monthlyNetIncome = calculateMonthlyNetIncome(customerId);
+        long monthlyTransactionCount = calculateMonthlyTransactionCount(customerId);
+        BigDecimal totalSavings = getTotalSavings(customerId);
+        BigDecimal totalCreditCardDebt = getTotalCreditCardDebt(customerId);
+        BigDecimal availableCollateral = getAvailableCollateral(customerId);
+
+        return new com.example.loan.model.CustomerFinancialSummary(monthlyNetIncome, monthlyTransactionCount, totalSavings, totalCreditCardDebt, availableCollateral);
     }
 }
