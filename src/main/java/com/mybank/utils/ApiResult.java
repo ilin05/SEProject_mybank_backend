@@ -22,11 +22,17 @@ public class ApiResult {
         this.payload = payload;
     }
 
+    public static ApiResult success() {
+        return new ApiResult(1, "success", null);
+    }
 
     public static ApiResult success(Object payload) {
         return new ApiResult(1, "success", payload);
     }
     public static ApiResult failure(String message) {
         return new ApiResult(0, message, null);
+    }
+    public static ApiResult failure(Integer code,String message) {
+        return new ApiResult(code, message, null);
     }
 }

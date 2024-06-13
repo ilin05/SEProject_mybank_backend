@@ -126,4 +126,11 @@ public interface CashierDutyMapper {
             "address=#{address} where id_number=#{idNumber}")
     public int updateCustomer(Customer customer);
 
+    @Select("select transaction_id from transaction where card_id=#{accountId}")
+    public List<Integer> selectTransactionIdList(String accountId);
+
+    // 网银部分
+
+    //
+
 }

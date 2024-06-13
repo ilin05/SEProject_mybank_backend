@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 
-@Mapper
 public interface ScheduleMapper {
 
     // 每天算利息

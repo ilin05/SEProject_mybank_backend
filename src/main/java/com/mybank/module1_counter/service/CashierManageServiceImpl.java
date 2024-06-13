@@ -2,6 +2,7 @@ package com.mybank.module1_counter.service;
 
 import com.mybank.module1_counter.entities.Cashier;
 import com.mybank.module1_counter.mapper.CashierManageMapper;
+import com.mybank.module2_counter.entities.Internet;
 import com.mybank.utils.ApiResult;
 import com.mybank.utils.HashUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +54,32 @@ public class CashierManageServiceImpl implements CashierManageService {
         } catch (Exception e) {
             return ApiResult.failure("Error removing cashier");
         }
+    }
+
+    @Override
+    public ApiResult blockInternet(String internetId) {
+        try{
+            cashierManageMapper.updateInBlackList(internetId);
+            return ApiResult.success(null);
+        }catch (Exception e){
+            return ApiResult.failure("Error blocking internet");
+        }
+    }
+
+    @Override
+    public ApiResult unblockInternet(String internetId) {
+        try{
+            System.out.println(internetId);
+            cashierManageMapper.updateOutBlackList(internetId);
+            return ApiResult.success(null);
+        }catch (Exception e){
+            return ApiResult.failure("Error unblocking internet");
+        }
+    }
+
+    @Override
+    public ApiResult getAllInternet() {
+        List<Internet> InternetList = cashierManageMapper.selectInternet();
+        return ApiResult.success(InternetList);
     }
 }

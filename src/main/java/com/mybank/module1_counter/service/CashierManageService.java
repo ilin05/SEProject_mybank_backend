@@ -17,4 +17,9 @@ public interface CashierManageService {
     // remove
     ApiResult removeCashier(Integer cashierId);
 
+    ApiResult blockInternet(String internetId);
+
+    ApiResult unblockInternet(String internetId);
+
+    ApiResult getAllInternet();
 }

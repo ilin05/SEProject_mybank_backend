@@ -348,6 +348,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
     @Override
     @Transactional
     public ApiResult reissue(String accountId, String password) {
+        System.out.println(accountId);
         try{
             SavingAccount account=cashierDutyMapper.selectAccount(accountId);
             if(account==null) return ApiResult.failure("not exists");

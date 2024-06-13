@@ -12,5 +12,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/admin/login");
         registry.addInterceptor(new CashierInterceptor()).addPathPatterns("/cashier/*")
                 .excludePathPatterns("/cashier/login");
+        registry.addInterceptor(new InternetInterceptor()).addPathPatterns("/interent/*")
+                .excludePathPatterns("/interent/login","/interent/register");
     }
 }
