@@ -25,6 +25,7 @@ public interface CashierDutyMapper {
     @Update("update saving_account set balance = balance+#{transactionAmount} where account_id = #{cardId}")
     public int updateAccountBalance(String cardId, Double transactionAmount);
 
+
     // 添加交易记录
     @Options(useGeneratedKeys = true, keyProperty = "transactionId")
     @Insert("insert into transaction(card_id, card_type, transaction_time, transaction_amount, transaction_type, transaction_channel, currency, money_source, money_goes) " +
