@@ -49,6 +49,8 @@ public interface CashierDutyMapper {
     @Select("select * from fixed_deposit natural join fixed_deposit_type where account_id = #{accountId}")
     public List<FixedDeposit> showFixedDeposit(String accountId);
 
+    @Select("select account_id, customer_id, balance, freeze_state, loss_state, deleted, open_time, open_amount from saving_account where account_id = #{accountId}")
+    public SavingAccount showAccountInfo(String accountId);
 
 
     @Select("SELECT customer_id FROM customer WHERE id_number=#{idNumber}")
@@ -125,5 +127,8 @@ public interface CashierDutyMapper {
     @Update("update customer set customer_name=#{customerName},phone_number=#{phoneNumber}," +
             "address=#{address} where id_number=#{idNumber}")
     public int updateCustomer(Customer customer);
+
+    @Select("select transaction_id from transaction where card_id=#{accountId}")
+    public List<Integer> selectTransactionIdList(String accountId);
 
 }

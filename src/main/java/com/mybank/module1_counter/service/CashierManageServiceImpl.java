@@ -25,10 +25,14 @@ public class CashierManageServiceImpl implements CashierManageService {
     @Override
     public ApiResult addCashier(Cashier cashier) {
         try {
+            System.out.println(cashier);
             String idNumber = cashier.getIdNumber();
             String lastSix = idNumber.substring(idNumber.length() - 6);
             cashier.setPassword(HashUtils.md5Hash(HashUtils.sha256Hash(lastSix)));
+            System.out.println("hello2");
+            System.out.println(cashier);
             cashierManageMapper.insertCashier(cashier);
+            System.out.println("hello1");
             cashier.setPassword(null);
             return ApiResult.success(cashier);
         } catch (Exception e) {
