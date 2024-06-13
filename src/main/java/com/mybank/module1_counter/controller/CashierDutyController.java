@@ -7,13 +7,15 @@ import com.mybank.module1_counter.entities.SavingAccount;
 import com.mybank.module1_counter.request.TransferRequest;
 import com.mybank.module1_counter.request.WithdrawRequest;
 import com.mybank.module1_counter.service.CashierDutyService;
+import com.mybank.module5_foreign.back.WHCommonFunctions;
 import com.mybank.utils.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
-@CrossOrigin
+@CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE,RequestMethod.OPTIONS})
 @RestController
 @RequestMapping("/cashier")
 public class CashierDutyController {
@@ -59,8 +61,9 @@ public class CashierDutyController {
         String accountId = fixedDepositRequest.getAccountId();
         String password = fixedDepositRequest.getPassword();
         String depositType = fixedDepositRequest.getDepositType();
+        Boolean isRenewal = fixedDepositRequest.getIsRenewal();
         double amount = fixedDepositRequest.getAmount();
-        return cashierDutyService.fixedDeposit(accountId, password, depositType, amount);
+        return cashierDutyService.fixedDeposit(accountId, password, depositType, amount,isRenewal);
     }
 
     // 转账
@@ -136,5 +139,19 @@ public class CashierDutyController {
     @PostMapping("/customerInfo")
     public ApiResult modifyCustomerInfo(@RequestBody Customer customer) {
         return cashierDutyService.updateCustomerInfo(customer);
+    }
+
+
+    // 外汇接口
+    @Autowired
+    private WHCommonFunctions whCommonFunctions;
+    @PostMapping("/openForeignAccount")
+    public ApiResult openForeignAccount(@RequestBody  Map<String,String> openForeignAccountRequest) {
+        String name = openForeignAccountRequest.get("name");
+        String password = openForeignAccountRequest.get("password");
+        String payPassword = openForeignAccountRequest.get("payPassword");
+        boolean ok = whCommonFunctions.addUser(name, password, payPassword);
+        if(ok) return ApiResult.success(null);
+        else return ApiResult.failure("失败");
     }
 }

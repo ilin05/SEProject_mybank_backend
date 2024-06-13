@@ -4,6 +4,7 @@ import com.mybank.module1_counter.entities.*;
 import com.mybank.module1_counter.request.FreezeRequest;
 import com.mybank.module1_counter.mapper.CashierDutyMapper;
 import com.mybank.module1_counter.request.*;
+import com.mybank.module5_foreign.back.WHCommonFunctions;
 import com.mybank.utils.ApiResult;
 import com.mybank.utils.HashUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,16 +55,20 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
             cashierDutyMapper.updateAccountBalance(accountId, amount);
             cashierDutyMapper.insertTransaction(txn);
+            List<Integer> transactionIds = cashierDutyMapper.selectTransactionIdList(accountId);
+            Integer transactionId = transactionIds.get(transactionIds.size()-1);
+            txn.setTransactionId(transactionId);
+            //System.out.println(transactionId);
             return ApiResult.success(txn);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure("Error demand deposit");
+            return ApiResult.failure("活期存款失败");
         }
     }
 
     @Override
     @Transactional
-    public ApiResult fixedDeposit(String accountId, String password, String depositType, double amount) {
+    public ApiResult fixedDeposit(String accountId, String password, String depositType, double amount,boolean isRenewal) {
         try{
             if(cashierDutyMapper.isDelete(accountId)) return ApiResult.failure("The card is already deleted");
             if(cashierDutyMapper.isFrozen(accountId)) return ApiResult.failure("The card is now frozen");
@@ -78,12 +83,15 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             fixedDeposit.setDepositAmount(amount);
             fixedDeposit.setAccountId(accountId);
             fixedDeposit.setDepositType(depositType);
-
+            fixedDeposit.setIsRenewal(isRenewal);
             cashierDutyMapper.insertFixedDeposit(fixedDeposit);
+            List<FixedDeposit> fixedDeposits = cashierDutyMapper.showFixedDeposit(accountId);
+            Integer fixedDepositId = fixedDeposits.get(fixedDeposits.size()-1).getFixedDepositId();
+            fixedDeposit.setFixedDepositId(fixedDepositId);
             return ApiResult.success(fixedDeposit);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure("Error fixed deposit");
+            return ApiResult.failure("定期存款失败");
         }
     }
 
@@ -105,14 +113,18 @@ public class CashierDutyServiceImpl implements CashierDutyService {
     public ApiResult transfer(TransferRequest txnRequest) {
         try{
             String accountId = txnRequest.getCardId();
-            if(cashierDutyMapper.isDelete(accountId)) return ApiResult.failure("The card is already deleted");
-            if(cashierDutyMapper.isFrozen(accountId)) return ApiResult.failure("The card is now frozen");
-            if(cashierDutyMapper.isLost(accountId)) return ApiResult.failure("The card is now lost");
+            SavingAccount savingAccount=cashierDutyMapper.selectAccount(accountId);
+            if(savingAccount==null) return ApiResult.failure("payer card id not exists");
+            if(savingAccount.getDeleted()) return ApiResult.failure("The payer card is already deleted");
+            if(savingAccount.getFreezeState()) return ApiResult.failure("The payer card is now frozen");
+            if(savingAccount.getLossState()) return ApiResult.failure("The payer card is now lost");
 
             String payeeId = txnRequest.getMoneyGoes();
-            if(cashierDutyMapper.isDelete(payeeId)) return ApiResult.failure("The card is already deleted");
-            if(cashierDutyMapper.isFrozen(payeeId)) return ApiResult.failure("The card is now frozen");
-            if(cashierDutyMapper.isLost(payeeId)) return ApiResult.failure("The card is now lost");
+            SavingAccount payeeSavingAccount=cashierDutyMapper.selectAccount(accountId);
+            if(payeeSavingAccount==null) return ApiResult.failure("payee card id not exists");
+            if(payeeSavingAccount.getDeleted()) return ApiResult.failure("The payee card is already deleted");
+            if(payeeSavingAccount.getFreezeState()) return ApiResult.failure("The payee card is now frozen");
+            if(payeeSavingAccount.getLossState()) return ApiResult.failure("The payee card is now lost");
 
             String hashPassword = HashUtils.md5Hash(txnRequest.getPassword());
             int ok = cashierDutyMapper.judgePassword(txnRequest.getCardId(), hashPassword);
@@ -143,11 +155,16 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             cashierDutyMapper.insertTransaction(txn2);
             cashierDutyMapper.updateAccountBalance(txnRequest.getCardId(), -txnRequest.getTransactionAmount());
             cashierDutyMapper.updateAccountBalance(txnRequest.getMoneyGoes(), txnRequest.getTransactionAmount());
+
+            List<Integer> transactionIds = cashierDutyMapper.selectTransactionIdList(accountId);
+            Integer transactionId = transactionIds.get(transactionIds.size()-1);
+            txn1.setTransactionId(transactionId-1);
+
             return ApiResult.success(txn1);
 
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure("Error transaction");
+            return ApiResult.failure("转账失败");
         }
     }
 
@@ -156,6 +173,8 @@ public class CashierDutyServiceImpl implements CashierDutyService {
     @Transactional
     public ApiResult withdrawDemandMoney(String accountId, String password, double amount) {
         try{
+            SavingAccount savingAccount=cashierDutyMapper.selectAccount(accountId);
+            if(savingAccount==null) return ApiResult.failure("card id not exists");
             if(cashierDutyMapper.isDelete(accountId)) return ApiResult.failure("The card is already deleted");
             if(cashierDutyMapper.isFrozen(accountId)) return ApiResult.failure("The card is now frozen");
             if(cashierDutyMapper.isLost(accountId)) return ApiResult.failure("The card is now lost");
@@ -175,6 +194,10 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             txn.setTransactionChannel("cashier");
             cashierDutyMapper.updateAccountBalance(accountId, -amount);
             cashierDutyMapper.insertTransaction(txn);
+
+            List<Integer> transactionIds = cashierDutyMapper.selectTransactionIdList(accountId);
+            Integer transactionId = transactionIds.get(transactionIds.size()-1);
+            txn.setTransactionId(transactionId);
             return ApiResult.success(txn);
 
         } catch (Exception e) {
@@ -187,6 +210,8 @@ public class CashierDutyServiceImpl implements CashierDutyService {
     @Transactional
     public ApiResult withdrawFixedMoney(int fixedDepositId, String accountId, String password, double amount) {
         try{
+            SavingAccount savingAccount=cashierDutyMapper.selectAccount(accountId);
+            if(savingAccount==null) return ApiResult.failure("card id not exists");
             if(cashierDutyMapper.isDelete(accountId)) return ApiResult.failure("The card is already deleted");
             if(cashierDutyMapper.isFrozen(accountId)) return ApiResult.failure("The card is now frozen");
             if(cashierDutyMapper.isLost(accountId)) return ApiResult.failure("The card is now lost");
@@ -205,8 +230,11 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             txn1.setCurrency("CNY");
             txn1.setCardType("save");
             txn1.setTransactionChannel("cashier");
-            txn1.setTransactionAmount(fixedDepositAmount);
+            txn1.setTransactionAmount(fixedDepositAmount - amount);
             cashierDutyMapper.insertTransaction(txn1);
+            List<Integer> transactionIds = cashierDutyMapper.selectTransactionIdList(accountId);
+            Integer transactionId = transactionIds.get(transactionIds.size()-1);
+            txn1.setTransactionId(transactionId);
 
             TransactionInfo txn2 = new TransactionInfo();
             txn2.setCardId(accountId);
@@ -221,11 +249,12 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
             cashierDutyMapper.updateAccountBalance(accountId, fixedDepositAmount-amount);
             cashierDutyMapper.deleteFixedDeposit(fixedDepositId);
-            return ApiResult.success(txn2);
+
+            return ApiResult.success(txn1);
 
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure("Error withdraw fixed deposit");
+            return ApiResult.failure("定期取款失败");
         }
     }
 
@@ -251,11 +280,11 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             account.setPassword(HashUtils.md5Hash(account.getPassword()));
             cashierDutyMapper.insertAccount(account);
             SavingAccount newAccount = cashierDutyMapper.selectAccount(accountId);
-            return ApiResult.success(newAccount);
+            return ApiResult.success(newAccount.getAccountId());
 
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure(e.getMessage());
+            return ApiResult.failure("开户失败");
         }
     }
 
@@ -281,7 +310,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure(e.getMessage());
+            return ApiResult.failure("Error freeze");
         }
     }
 
@@ -298,7 +327,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             return ApiResult.success(freezeRecordInfo);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure(e.getMessage());
+            return ApiResult.failure("Error get frozen record");
         }
     }
 
@@ -320,7 +349,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             return ApiResult.success(null);
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure(e.getMessage());
+            return ApiResult.failure("Error freeze record");
         }
     }
 
@@ -341,7 +370,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             return ApiResult.success(null);
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure(e.getMessage());
+            return ApiResult.failure("Error report loss");
         }
     }
 
@@ -364,7 +393,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             return ApiResult.success(null);
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure(e.getMessage());
+            return ApiResult.failure("Error reissue");
         }
     }
     @Override
@@ -388,13 +417,14 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure(e.getMessage());
+            return ApiResult.failure("Error close account");
         }
     }
     @Override
     @Transactional
     public ApiResult modifyAccountPassword(String accountId, String oldPassword, String newPassword){
         try{
+
             SavingAccount account=cashierDutyMapper.selectAccount(accountId);
             if(account==null) return ApiResult.failure("not exists");
             if(account.getDeleted()) return ApiResult.failure("The card is already deleted");
@@ -412,7 +442,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
 
         }catch (Exception e){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return ApiResult.failure(e.getMessage());
+            return ApiResult.failure("Error modify password");
         }
     }
 
@@ -439,7 +469,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             cashierDutyMapper.updateCustomer(customer);
             return ApiResult.success(null);
         } catch (Exception e) {
-            return ApiResult.failure(e.getMessage());
+           return ApiResult.failure("error update customer info");
         }
     }
 }

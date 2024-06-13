@@ -1,4 +1,4 @@
-package com.mybank.interceptor;
+package com.mybank.module1_counter.interceptor;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

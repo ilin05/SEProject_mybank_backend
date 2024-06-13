@@ -42,6 +42,7 @@ public class LoginController {
 
     @PostMapping("/cashier/login")
     public ApiResult cashierLogin(@RequestBody Map<String,Object> loginRequest){
+        System.out.println(loginRequest);
         int cashierId = (int) loginRequest.get("cashierId");
         String password = (String) loginRequest.get("password");
         String hashPassword = HashUtils.md5Hash(password);

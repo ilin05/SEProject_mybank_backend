@@ -1,46 +1,37 @@
-package com.mybank.interceptor;
+package com.mybank.module1_counter.interceptor;
 
 import com.google.gson.Gson;
 import com.mybank.utils.ApiResult;
 import com.mybank.utils.JwtUtils;
-import com.mybank.utils.UserUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
 
-
-public class InternetInterceptor implements HandlerInterceptor {
-
-    public void writeFailure(HttpServletResponse response, String message) throws Exception {
-        ApiResult notLogin = ApiResult.failure(message);
-        String notLoginString = new Gson().toJson(notLogin);
-        response.getWriter().write(notLoginString);
-    }
+public class AdminInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String url = request.getRequestURL().toString();
         Claims claims = null;
         try {
             String jwt = request.getHeader("Authorization");
             claims = JwtUtils.parseJwt(jwt);
         } catch (Exception e) {
-            writeFailure(response,"NOT_LOGIN");
+            ApiResult notLogin = ApiResult.failure("NOT_LOGIN");
+            String notLoginString = new Gson().toJson(notLogin);
+            response.getWriter().write(notLoginString);
             return false;
         }
         String role = (String) claims.get("role");
-        if(!"internet".equals(role)) {
-            writeFailure(response, "NOT_INTERNET");
+        if(!"admin".equals(role)) {
+            ApiResult notAdmin = ApiResult.failure("NOT_ADMIN");
+            String notAdminString = new Gson().toJson(notAdmin);
+            response.getWriter().write(notAdminString);
             return false;
         }
-
-        HashMap<String,String> params = new HashMap<>();
-        params.put("customerId",claims.get("customerId") + "");
-        params.put("customerAccountId",(String) claims.get("customerAccountId"));
-        UserUtils.set(params);
         return true;
     }
 
@@ -51,7 +42,6 @@ public class InternetInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        UserUtils.remove();
         HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
     }
 }
