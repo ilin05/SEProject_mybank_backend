@@ -42,13 +42,19 @@ public class WHAccountController {
     public ResponseEntity<?> deposit(@RequestBody TransactionRequest request, HttpSession session) {
         WHUser WHUser = (WHUser) session.getAttribute("user");
         if (WHUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "WHUser not logged in"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "User not logged in"));
         }
-        boolean success = commonFunctions.addWHModule(WHUser.getName(), request.getCurrencyId(), request.getAmount());
-        if (success) {
-            return ResponseEntity.ok(Map.of("message", "Deposit successful"));
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Deposit failed"));
+
+        try {
+            boolean success = commonFunctions.toForeign(request.getAccount_id(), request.getPassword(), WHUser.getName(), request.getCurrencyId(), request.getAmount());
+            if (success) {
+                return ResponseEntity.ok(Map.of("message", "Deposit successful"));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Deposit failed"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Internal server error"));
         }
     }
 
@@ -56,13 +62,19 @@ public class WHAccountController {
     public ResponseEntity<?> withdraw(@RequestBody TransactionRequest request, HttpSession session) {
         WHUser WHUser = (WHUser) session.getAttribute("user");
         if (WHUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "WHUser not logged in"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "User not logged in"));
         }
-        boolean success = commonFunctions.delWHModule(WHUser.getName(), request.getCurrencyId(), request.getAmount());
-        if (success) {
-            return ResponseEntity.ok(Map.of("message", "Withdrawal successful"));
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Insufficient funds or withdrawal failed"));
+
+        try {
+            boolean success = commonFunctions.fromForeign(request.getAccount_id(), request.getPassword(), WHUser.getName(), request.getCurrencyId(), request.getAmount());
+            if (success) {
+                return ResponseEntity.ok(Map.of("message", "Withdrawal successful"));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Insufficient funds or withdrawal failed"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Internal server error"));
         }
     }
 
@@ -97,15 +109,26 @@ public class WHAccountController {
 }
 
 class TransactionRequest {
-    private double amount;
+    private String account_id;
+    private String password;
     private int currencyId;
+    private double amount;
 
-    public double getAmount() {
-        return amount;
+    // Getter 和 Setter 方法
+    public String getAccount_id() {
+        return account_id;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public void setAccount_id(String account_id) {
+        this.account_id = account_id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public int getCurrencyId() {
@@ -114,6 +137,14 @@ class TransactionRequest {
 
     public void setCurrencyId(int currencyId) {
         this.currencyId = currencyId;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 }
 

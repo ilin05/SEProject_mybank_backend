@@ -20,6 +20,7 @@ public class PaymentController {
     @PostMapping("/api/pay")
     @ResponseBody
     public GeneralResponse pay(@RequestBody Bill bill) {
+        System.out.println(bill);
         boolean suc = bill_impl.payBill(bill);
         if(suc)
             return new GeneralResponse(0);

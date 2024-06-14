@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>账户管理</title>
+    <link rel="stylesheet" type="text/css" href="./css/basic.css">
+    <link rel="stylesheet" type="text/css" href="./css/account.css">
+</head>
+<body>
+<div class="sidebar">
+    <div class="profile">
+        <img src="./img/猫.png" alt="avatar" width="80px" height="80px">
+    </div>
+    <div class="menu">
+        <div class="menu-item" id="trade">外币交易</div>
+        <div class="menu-item" id="search_currency">搜索外币</div>
+        <div class="menu-item" id="transaction_records">交易记录</div>
+        <div class="menu-item active" id="account">账户管理</div>
+        <div class="menu-item" id="other">返回</div>
+    </div>
+</div>
+<div class="main-content">
+    <div class="header">账户管理</div>
+    <div class="content">
+        <div class="left-panel">
+            <div class="account-info">
+                <h2>账户概览</h2>
+                <p>账户类型：个人账户</p>
+                <h3>账户余额</h3>
+                <div id="balance"></div>
+                <!-- 持仓信息容器 -->
+                <div id="holdingsContainer"></div>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="transaction-form">
+                <h2>资金转入/转出</h2>
+                <form id="fundTransferForm">
+                    <label for="transactionType">选择类型:</label>
+                    <select id="transactionType">
+                        <option value="deposit">转入</option>
+                        <option value="withdraw">转出</option>
+                    </select>
+                    <h3 id="currencySelect">货币种类：人民币</h3>
+                    <label for="amount">金额 (money):</label>
+                    <input type="number" id="amount" min="1" required>
+                    <label for="accountId">账户ID:</label>
+                    <input type="text" id="accountId" required>
+                    <label for="password">密码:</label>
+                    <input type="password" id="password" required>
+                    <button type="submit">执行交易</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        © 2024 在线银行系统. All rights reserved.
+    </div>
+</div>
+<script src="js/basic.js"></script>
+<script src="js/account.js"></script>
+</body>
+</html>
+
+

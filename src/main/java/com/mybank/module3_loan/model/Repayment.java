@@ -12,8 +12,8 @@ import java.time.LocalDate;
 public class Repayment {
     @Id
     private Long id;
-    private Long loanApplicationId;
+    private Long loanId;
     private String accountId;
-    private BigDecimal amount;
+    private BigDecimal repaymentAmount;
     private LocalDate repaymentDate;
 }

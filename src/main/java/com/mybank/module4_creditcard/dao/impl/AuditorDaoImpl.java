@@ -37,9 +37,9 @@ public class AuditorDaoImpl implements AuditorDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
             var ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, Objects.requireNonNull(auditor.getName()));
-            ps.setString(2, Objects.requireNonNull(auditor.getPassword()));
-            ps.setString(3, Objects.requireNonNull(auditor.getPhone()));
+            ps.setString(1, auditor.getName());
+            ps.setString(2, auditor.getPassword());
+            ps.setString(3, auditor.getPhone());
             ps.setBoolean(4, auditor.getAuth() == Authority.REVIEW_APPLICATIONS);
             return ps;
         }, keyHolder);

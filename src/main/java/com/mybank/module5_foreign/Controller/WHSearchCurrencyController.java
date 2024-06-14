@@ -23,8 +23,8 @@ public class WHSearchCurrencyController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> getExchangeRates(@RequestBody CurrencyRequest request) {
         try {
-            Map<String, Double> rates = commonFunctions.getExchangeRateByCurrency(request.getCurrencyId());
-            String currencyName = commonFunctions.findCurrencyName(request.getCurrencyId());
+            Map<String, Double> rates = commonFunctions.getExchangeRateByCurrency(commonFunctions.findCurrencyID(request.getCurrencyId()));
+            String currencyName = commonFunctions.findCurrencyName(commonFunctions.findCurrencyID(request.getCurrencyId()));
 
             if (rates == null || rates.isEmpty() || currencyName == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -43,9 +43,9 @@ public class WHSearchCurrencyController {
 }
 
 class CurrencyRequest {
-    private int currencyId;
+    private String currencyId;
 
-    public int getCurrencyId() { return currencyId; }
-    public void setCurrencyId(int currencyId) { this.currencyId = currencyId; }
+    public String getCurrencyId() { return currencyId; }
+    public void setCurrencyId(String currencyId) { this.currencyId = currencyId; }
 }
 

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>外币交易</title>
+    <link rel="stylesheet" type="text/css" href="./css/trade.css">
+</head>
+<body>
+<div class="sidebar">
+    <div class="profile">
+        <img src="./img/猫.png" alt="avatar" width="80px" height="80px">
+    </div>
+    <div class="menu">
+        <div class="menu-item" id="trade">外币交易</div>
+        <div class="menu-item" id="search_currency">搜索外币</div>
+        <div class="menu-item" id="transaction_records">交易记录</div>
+        <div class="menu-item" id="account">账户管理</div>
+        <div class="menu-item" id="other">返回</div>
+    </div>
+</div>
+<div class="main-content">
+    <div class="header">外币交易</div>
+    <div class="content">
+        <div class="trade-area">
+            <div class="currency-selection">
+                <label for="baseCurrency" id="baseCurrencyLabel">基准货币 (from):</label>
+                <select id="baseCurrency"></select>
+                <label for="targetCurrency" id="targetCurrencyLabel">目标货币 (to):</label>
+                <select id="targetCurrency"></select>
+                <button onclick="fetchExchangeRate()">查询汇率</button>
+            </div>
+            <div class="amount-entry">
+                <div class="trade-type-selection">
+                    <label for="tradeType">交易类型:</label>
+                    <select id="tradeType" onchange="toggleTradeDirection()">
+                        <option value="buy">买入</option>
+                        <option value="sell">卖出</option>
+                    </select>
+                </div>
+                <label for="amount">金额:</label>
+                <input type="number" id="amount" placeholder="输入金额">
+                <button onclick="calculateExchange()">计算交易额</button>
+            </div>
+        </div>
+        <div class="result-display" id="conversionResult"></div>
+        <div class="confirmation-area">
+            <button id="confirmButton" class="confirm-button">确认交易</button>
+        </div>
+    </div>
+    <div class="footer">
+        © 2024 在线银行系统. All rights reserved.
+    </div>
+</div>
+<script src="js/basic.js"></script>
+<script src="js/trade.js"></script>
+</body>
+</html>
+
+

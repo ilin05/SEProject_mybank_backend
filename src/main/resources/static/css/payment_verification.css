@@ -1,0 +1,64 @@
+/* 基础重置 */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    font-family: Arial, sans-serif;
+}
+
+/* 页面背景 */
+body {
+    background-color: #E0FFFF; /* 轻淡的背景色 */
+}
+
+/* 验证容器样式 */
+.modal-content {
+    background-color: #ffffff; /* 白色背景 */
+    border: 1px solid #ccc; /* 添加边框 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 添加阴影效果 */
+    padding: 20px; /* 内部间距 */
+    width: 300px; /* 容器宽度 */
+    margin: auto; /* 确保自动居中 */
+    border-radius: 8px; /* 圆角边框 */
+}
+
+/* 标题样式 */
+h1 {
+    text-align: center; /* 标题居中 */
+    color: #333; /* 标题颜色 */
+}
+
+/* 表单样式 */
+form {
+    display: flex;
+    flex-direction: column; /* 使表单项垂直排列 */
+}
+
+/* 输入框样式 */
+input[type="password"], input[type="submit"] {
+    padding: 10px;
+    margin-top: 10px; /* 顶部间距 */
+    border: 1px solid #ddd; /* 边框颜色 */
+    border-radius: 4px; /* 输入框圆角 */
+}
+
+input[type="password"]{
+    width: 90%; /* 输入框宽度 */
+}
+
+/* 提交按钮特定样式 */
+input[type="submit"] {
+    background-color: #007bff; /* 按钮颜色 */
+    color: white; /* 文字颜色 */
+    cursor: pointer; /* 鼠标样式 */
+    width: 100%; /* 输入框宽度 */
+}
+
+/* 鼠标悬停在按钮上时的样式 */
+input[type="submit"]:hover {
+    background-color: #0056b3; /* 按钮悬停颜色 */
+}

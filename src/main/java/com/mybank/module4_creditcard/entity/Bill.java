@@ -115,16 +115,16 @@ public class Bill {
             };
         }
 
-        public static PaymentType getType(String str) {
-            return switch (str) {
+        public int getIntValue() {
+            return val;
+        }
+
+        public static PaymentType getType(String i) {
+            return switch (i) {
                 case "transfer" -> TRANSFER;
                 case "repayment" -> REPAYMENT;
                 default -> null;
             };
-        }
-
-        public int getIntValue() {
-            return val;
         }
     }
 }

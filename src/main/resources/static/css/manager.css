@@ -1,0 +1,62 @@
+/* manager.css */
+body, html {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 0;
+    margin: 0;
+    height: 100%; /* 确保 html 和 body 高度为 100% */
+}
+
+body {
+    background-image: url('../img/manager.jpg');
+    background-position: center; /* 使背景图片居中 */
+    background-repeat: no-repeat; /* 防止背景图片重复 */
+    background-size: cover; /* 背景图片覆盖整个视口 */
+    background-attachment: fixed;
+    display: flex;
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    height: 100%; /* 确保 body 高度为 100% */
+}
+
+.container {
+    width: 80%;
+    max-width: 800px; /* 可选：设置最大宽度 */
+    background: rgba(255, 255, 255, 0.8); /* 半透明白色背景 */
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px; /* 可选：添加一些外边距 */
+    border-radius: 10px; /* 可选：添加圆角 */
+}
+
+h1 {
+    color: #333;
+}
+
+.links button, .logout-button {
+    padding: 15px 30px;
+    margin: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.links button:hover, .logout-button:hover {
+    background-color: #0056b3;
+}
+
+.logout-button {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+}
+
+.footer {
+    margin-top: 40px;
+    color: #666;
+}
+

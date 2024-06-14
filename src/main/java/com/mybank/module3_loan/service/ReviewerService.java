@@ -30,6 +30,9 @@ public class ReviewerService {
     private CreditCardRepository creditCardRepository;
 
     @Autowired
+    private ReviewerRepository reviewerRepository;
+
+    @Autowired
     private UserService userService;
 
     // 0: PENDING, 1: REJECTED, 2: APPROVED, 3: CONFIRMED
@@ -37,6 +40,32 @@ public class ReviewerService {
     public static final String REJECTED = "REJECTED";
     public static final String APPROVED = "APPROVED";
     public static final String CONFIRMED = "CONFIRMED";
+
+
+    public boolean reviewLoan(Long loanId, Long reviewerId, String status, String reviewComments, BigDecimal collateralAmount) {
+        Optional<LoanApplication> optionalLoanApplication = loanApplicationRepository.findById(loanId);
+        if (optionalLoanApplication.isEmpty()) {
+            return false;
+        }
+
+        LoanApplication loanApplication = optionalLoanApplication.get();
+        loanApplication.setReviewerId(reviewerId);
+        loanApplication.setReviewComments(reviewComments);
+
+        if (APPROVED.equals(status)||CONFIRMED.equals(status)) {
+            loanApplication.setStatus(APPROVED);
+            loanApplication.setCollateralAmount(collateralAmount);
+            loanApplicationRepository.save(loanApplication);
+            if (collateralAmount.compareTo(BigDecimal.ZERO) == 0){
+                userService.confirmLoan(loanId);
+            }
+        } else {
+            loanApplication.setStatus(REJECTED);
+            loanApplicationRepository.save(loanApplication);
+        }
+
+            return true;
+    }
 
     public void reviewLoanApplication(Long loanApplicationId, boolean approve, String reviewComments, BigDecimal collateralAmount) {
         Optional<LoanApplication> loanApplicationOptional = loanApplicationRepository.findById(loanApplicationId);
@@ -59,7 +88,7 @@ public class ReviewerService {
                     loanApplication.setCollateralAmount(BigDecimal.ZERO);
                     loanApplication.setReviewComments(reviewComments);
                     loanApplicationRepository.save(loanApplication);
-                    confirmLoan(loanApplication);
+                    userService.confirmLoan(loanApplicationId);
                 } else {
                     loanApplication.setStatus(REJECTED);
                 }
@@ -109,7 +138,7 @@ public class ReviewerService {
     }
 
     public List<SavingAccount> getSavingAccounts(Long customerId) {
-        return savingAccountRepository.findByCustomerId(customerId);
+        return savingAccountRepository.findByCustomerIdAndDeletedFalse(customerId);
     }
 
     public BigDecimal calculateMonthlyNetIncome(Long customerId) {
@@ -138,7 +167,7 @@ public class ReviewerService {
     }
 
     private List<Transaction> getTransactionsByCustomerId(Long customerId) {
-        List<SavingAccount> accounts = savingAccountRepository.findByCustomerId(customerId);
+        List<SavingAccount> accounts = savingAccountRepository.findByCustomerIdAndDeletedFalse(customerId);
         List<String> accountIds = accounts.stream()
                 .map(SavingAccount::getAccountId)
                 .collect(Collectors.toList());
@@ -147,7 +176,7 @@ public class ReviewerService {
     }
 
     public BigDecimal getTotalSavings(Long customerId) {
-        List<SavingAccount> savingAccounts = savingAccountRepository.findByCustomerId(customerId);
+        List<SavingAccount> savingAccounts = savingAccountRepository.findByCustomerIdAndDeletedFalse(customerId);
         return savingAccounts.stream()
                 .map(savingAccount -> BigDecimal.valueOf(savingAccount.getBalance()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -169,13 +198,36 @@ public class ReviewerService {
         return customer.getAssets(); // Assuming assets can be used as collateral
     }
 
+    public BigDecimal getCreditLine(Long customerId) {
+        Customer customer = customerRepository.findById(customerId).orElse(null);
+        if (customer == null) {
+            return BigDecimal.ZERO;
+        }
+        return BigDecimal.valueOf(customer.getCreditLine());
+    }
+
+
     public CustomerFinancialSummary getCustomerFinancialSummary(Long customerId) {
         BigDecimal monthlyNetIncome = calculateMonthlyNetIncome(customerId);
         long monthlyTransactionCount = calculateMonthlyTransactionCount(customerId);
         BigDecimal totalSavings = getTotalSavings(customerId);
         BigDecimal totalCreditCardDebt = getTotalCreditCardDebt(customerId);
         BigDecimal availableCollateral = getAvailableCollateral(customerId);
+        BigDecimal credit = getCreditLine(customerId);
+        return new CustomerFinancialSummary(monthlyNetIncome, monthlyTransactionCount, totalSavings, totalCreditCardDebt, availableCollateral, credit);
+    }
 
-        return new CustomerFinancialSummary(monthlyNetIncome, monthlyTransactionCount, totalSavings, totalCreditCardDebt, availableCollateral);
+    public List<LoanApplication> getPendingLoansByReviewerId(Long reviewerId) {
+        System.out.println("getPendingLoansByReviewerId: " + reviewerId);
+        Reviewer reviewer = reviewerRepository.findById(reviewerId).orElseThrow(() -> new RuntimeException("Reviewer not found"));
+        //System.out.println(reviewer);
+        if (reviewer.getApprovalLevel() == 0) {
+            return loanApplicationRepository.findByStatusAndLoanAmountLessThan(PENDING, new BigDecimal(100000));
+        } else if (reviewer.getApprovalLevel() == 1) {
+            return loanApplicationRepository.findByStatus(PENDING);
+        } else {
+            throw new RuntimeException("Invalid approval level");
+        }
     }
 }
+

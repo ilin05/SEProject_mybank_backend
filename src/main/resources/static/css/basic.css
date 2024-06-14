@@ -1,0 +1,86 @@
+/* basic.css */
+body, html {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100%;
+    width:100vw;
+    overflow: hidden;
+}
+
+.sidebar {
+    background-color: #2c3e50;
+    color: white;
+    width: 200px;
+    padding: 20px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centering items in sidebar */
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%; /* Make avatar circular */
+    border: 3px solid #3498db; /* Add a border around the avatar */
+    margin-bottom: 10px; /* Space below the avatar */
+}
+
+.profile {
+    margin-bottom: 30px; /* Space between profile and menu items */
+    background: linear-gradient(
+                -50deg,
+                #F7A37B,
+                #F7A37B 10%,
+                #FFDEA8 10%,
+                #FFDEA8 20%,
+                #D0E4B0 20%,
+                #D0E4B0 30%,
+                #7CC5D0 30%,
+                #7CC5D0 40%,
+                #00A2E1 40%,
+                #00A2E1 50%,
+                #0085C8 50%,
+                #0085C8 60%
+    );
+    padding: 10px;
+}
+
+.menu-item {
+    width: 100%; /* Full width to sidebar */
+    padding: 10px 0;
+    text-align: center;
+    border-radius: 5px; /* Rounded corners for menu items */
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.menu-item:hover {
+    background-color: #34495e; /* Slightly lighter than sidebar background */
+}
+
+.main-content {
+    flex: 1;
+    background-color: #f4f4f4;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.header {
+    background-color: #2196F3;
+    color: white;
+    padding: 10px;
+    font-size: 24px;
+    margin-top: 20px; /* 与内容区有间隔 */
+}
+
+.footer {
+    padding: 10px;
+    text-align: center;
+    background-color: #2196F3;
+    color: white;
+}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>搜索外币</title>
+    <link rel="stylesheet" type="text/css" href="./css/search_currency.css">
+</head>
+<body>
+<div class="sidebar">
+    <div class="profile">
+        <img src="./img/猫.png" alt="avatar" width="80px" height="80px">
+    </div>
+    <div class="menu">
+        <div class="menu-item" id="trade">外币交易</div>
+        <div class="menu-item active" id="search_currency">搜索外币</div>
+        <div class="menu-item" id="transaction_records">交易记录</div>
+        <div class="menu-item" id="account">账户管理</div>
+        <div class="menu-item" id="other">返回</div>
+    </div>
+</div>
+<div class="main-content">
+    <div class="header">搜索外币</div>
+    <div class="content">
+        <div class="search-area">
+            <input type="text" id="currencyInput" placeholder="Enter Currency ID">
+            <button onclick="fetchExchangeRates()">Search</button>
+        </div>
+        <div id="currencyName"></div>
+        <div class="results-table">
+            <table id="ratesTable">
+                <thead>
+                <tr>
+                    <th>Currency</th>
+                    <th>Exchange Rate</th>
+                </tr>
+                </thead>
+                <tbody id="ratesList">
+                <!-- The rows will be dynamically generated here -->
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            <button id="prevPage" onclick="prevPage()">上一页</button>
+            <span id="pageInfo">Page 1</span>
+            <button id="nextPage" onclick="nextPage()">下一页</button>
+        </div>
+    </div>
+    <div class="footer">
+        © 2024 在线银行系统. All rights reserved.
+    </div>
+</div>
+<script src="js/basic.js"></script>
+<script src="js/search_currency.js"></script>
+</body>
+</html>

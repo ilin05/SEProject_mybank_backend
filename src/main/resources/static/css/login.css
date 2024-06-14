@@ -1,0 +1,117 @@
+/*login.css*/
+html, body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height:100vh;
+    overflow: hidden;
+}
+
+header {
+    background-color: #0073e6;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 10px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+.container {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-image: url('../img/login-background.jpg');
+    background-size: cover; /* 使背景图片覆盖整个容器 */
+    background-position: center; /* 使背景图片居中 */
+    background-repeat: no-repeat; /* 防止背景图片重复 */
+}
+
+.bank-logo {
+    flex: 0 0 50%;
+    text-align: center;
+}
+
+.bank-logo img {
+    width: 60%;
+    height: auto;
+}
+
+section#login {
+    flex: 0 0 30%;
+    margin-left: 20px;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 400px;
+}
+
+section#login h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.avatar img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%; /* Make avatar circular */
+    border: 3px solid #3498db; /* Add a border around the avatar */
+    display: block; /* Ensures the image behaves as a block-level element */
+    margin: 10px auto; /* Center the image horizontally */
+}
+.avatar {
+    text-align: center; /* This ensures that the content inside is centered if display:block fails */
+    width: 100%; /* Makes sure the container spans the full width */
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 95%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 35%;
+    padding: 10px;
+    background-color: #0073e6;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+footer {
+    padding: 10px;
+    text-align: center;
+    background-color: #2196F3;
+    color: white;
+    width: 100%;
+}

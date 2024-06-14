@@ -3,6 +3,7 @@ package com.mybank.module3_loan.controller;
 import com.mybank.module3_loan.model.*;
 import com.mybank.module3_loan.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,8 +48,8 @@ public class UserController {
     // withdraw
     @PostMapping("/withdraw")
     public ResponseEntity<List<LoanApplication>> getPendingOrRecentLoans(
-            @RequestParam Long customerId, @RequestParam int days) {
-        List<LoanApplication> loans = userService.getPendingOrRecentLoans(customerId, days);
+            @RequestParam Long customerId, @RequestParam int time) {
+        List<LoanApplication> loans = userService.getPendingOrRecentLoans(customerId, time);
         return ResponseEntity.ok(loans);
     }
 
@@ -117,7 +118,6 @@ public class UserController {
         userService.updatePendingAndOverdueLoanRepaymentStatuses(customerId);
         return ResponseEntity.ok().build();
     }
-
 
 
     @PostMapping("/login")

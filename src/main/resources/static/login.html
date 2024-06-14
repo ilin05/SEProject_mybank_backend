@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="stylesheet" type="text/css" href="./css/login.css">
+</head>
+<body>
+<header>
+    <h1>外汇系统登录</h1>
+    <nav>
+        <ul>
+            <li><a href="index.html">首页</a></li>
+            <li><a href="trade.html">服务</a></li>
+            <li><a href="search_currency.html">联系我们</a></li>
+        </ul>
+    </nav>
+</header>
+<div class="container">
+    <section id="login">
+        <h2>用户登录</h2>
+        <br>
+        <div class="avatar">
+            <img src="./img/未知头像.png" alt="avatar" width="80px" height="80px">
+        </div>
+        <br>
+        <label>用户名:</label>
+        <br>
+        <input type="text" placeholder="输入用户名" id="name">
+        <br>
+        <label>密码:</label>
+        <br>
+        <input type="password" placeholder="输入密码" id="password">
+        <br><br>
+        <button id="btn" onclick="login()">登录</button>
+    </section>
+</div>
+<footer>
+    © 2024 在线银行系统. All rights reserved.
+</footer>
+<script src="js/login.js"></script>
+</body>
+</html>

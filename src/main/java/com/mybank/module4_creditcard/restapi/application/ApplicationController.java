@@ -22,6 +22,7 @@ public class ApplicationController {
     @GetMapping("/api/application")
     @ResponseBody
     public GeneralResponse getApplications() {
+        System.out.println("hello");
         List<Application> res;
         try {
             res = impl.queryApplications();
@@ -65,6 +66,8 @@ public class ApplicationController {
     @PostMapping("/api/application/add")
     @ResponseBody
     public GeneralResponse addApplication(@RequestBody Application application) {
+        System.out.println("hello1");
+        System.out.println(application);
         try {
             impl.addApplication(application);
         } catch (NullPointerException e) {
@@ -81,8 +84,10 @@ public class ApplicationController {
     @PutMapping("/api/application/review")
     @ResponseBody
     public GeneralResponse reviewApplication(@RequestBody Review review) {
+        System.out.println("Review: " + review.toString());
+        boolean res = false;
         try {
-            impl.reviewApplication(review);
+            res = impl.reviewApplication(review);
         } catch (NullPointerException e) {
             return new GeneralResponse(false, 0, "null input data: " + e.getMessage());
         } catch (NumberFormatException e) {
@@ -91,7 +96,7 @@ public class ApplicationController {
             return new GeneralResponse(false, 2,
                     "cannot access data. maybe wrong information provided: " + e.getMessage());
         }
-        return new GeneralResponse(0);
+        return new GeneralResponse(res, 0, "");
     }
 
 }

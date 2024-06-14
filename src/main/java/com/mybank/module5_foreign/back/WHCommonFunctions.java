@@ -1,6 +1,5 @@
 package com.mybank.module5_foreign.back;
 
-import org.springframework.boot.autoconfigure.batch.BatchDataSourceScriptDatabaseInitializer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -97,11 +96,14 @@ public class WHCommonFunctions {
     }
 
     public double getExchangeRate(int currency_from, int currency_to){
+        if(currency_from == currency_to){
+            return 1.0;
+        }
         LocalDateTime currentTime = LocalDateTime.now();
-        int now_minu = currentTime.getHour() * 60 + currentTime.getMinute();
-        double noise = Math.sin((double)now_minu / (double)(24 * 60) * 2 * Math.PI);
+        int now_minu = currentTime.getHour() * 3600 + currentTime.getMinute()*60 + currentTime.getSecond();
+        double noise = Math.sin((double)now_minu / (double)(24 * 60 * 60) * 2 * Math.PI);
         double base_rate = calBaseRate(currency_from, currency_to);
-        return base_rate + base_rate * 0.01 * noise;
+        return base_rate + base_rate * 0.1 * noise;
     }
 
     public int deal(String username, String paypassword, int currency_from, int currency_to, double amount){
@@ -278,6 +280,35 @@ public class WHCommonFunctions {
         }
     }
 
+    public List<Map<String, Object>> getUserHoldings(int userId) {
+        List<Map<String, Object>> allHoldings = dbUtil.findUserHoldings(userId);
+        List<Map<String, Object>> filteredHoldings = new ArrayList<>();
+
+        for (Map<String, Object> holding : allHoldings) {
+            int currencyId = (int) holding.get("currency_id");
+            if (currencyId != 0) {
+                holding.put("currency_name", findCurrencyName(currencyId)); // 添加货币名称
+                filteredHoldings.add(holding);
+            }
+        }
+
+        return filteredHoldings;
+    }
+
+    public boolean toForeign(String account_id, String password, String username, int currency, double amount){
+        this.addWHModule(username, currency, amount);
+        this.delOutModule(account_id, username, password, amount);
+        this.dbUtil.insertOutTransaction(account_id, username, amount, LocalDateTime.now().toString(), true);
+        return true;
+    }
+
+    public boolean fromForeign(String account_id, String password, String username, int currency, double amount){
+        this.delWHModule(username, password, currency, amount);
+        this.addOutModule(account_id, amount);
+        this.dbUtil.insertOutTransaction(account_id, username, amount, LocalDateTime.now().toString(), false);
+        return true;
+    }
+
 
     public boolean addWHModule(String username, int currency, double amount){
         List<Map<String, Object>> user = this.dbUtil.findUserByName(username);
@@ -297,12 +328,28 @@ public class WHCommonFunctions {
         }
     }
 
-    public boolean delWHModule(String username, int currency, double amount){
+    public boolean addOutModule(String account_id, double amount){
+        List<Map<String, Object>> account = this.dbUtil.selectAccount(account_id);
+        if (account.size() == 0){
+            return false;
+        } else {
+            List<Map<String, Object>> account_balance = this.dbUtil.selectAccountBalance(account_id);
+            double ori_currency = ((BigDecimal) account_balance.get(0).get("balance")).doubleValue();
+            this.dbUtil.updateAccountBalance(account_id, ori_currency + amount);
+            return true;
+        }
+    }
+
+    public boolean delWHModule(String username, String password, int currency, double amount){
         List<Map<String, Object>> user = this.dbUtil.findUserByName(username);
         if (user.size() == 0){
             return false;
         } else {
             int user_id = (int) this.dbUtil.findUserByName(username).get(0).get("user_id");
+            if (this.dbUtil.findUserPayPassword(user_id, password).size() != 1){
+                System.out.println("支付密码错误: " + username);
+                return false;
+            }
             List<Map<String, Object>> userCurrency = this.dbUtil.findUserCurrency(user_id, currency);
             if (userCurrency.size() == 0) {
                 // 如果用户没有该外币记录，则不能删除
@@ -323,23 +370,34 @@ public class WHCommonFunctions {
         }
     }
 
-
-
-
-    public List<Map<String, Object>> getUserHoldings(int userId) {
-        List<Map<String, Object>> allHoldings = dbUtil.findUserHoldings(userId);
-        List<Map<String, Object>> filteredHoldings = new ArrayList<>();
-
-        for (Map<String, Object> holding : allHoldings) {
-            int currencyId = (int) holding.get("currency_id");
-            if (currencyId != 0) {
-                holding.put("currency_name", findCurrencyName(currencyId)); // 添加货币名称
-                filteredHoldings.add(holding);
+    public boolean delOutModule(String account_id, String username, String password, double amount){
+        List<Map<String, Object>> account = this.dbUtil.selectAccount(account_id);
+        if (account.size() == 0){
+            return false;
+        } else {
+            int user_id = (int) this.dbUtil.findUserByName(username).get(0).get("user_id");
+            if (this.dbUtil.findUserPayPassword(user_id, password).size() != 1){
+                System.out.println("支付密码错误: " + username);
+                return false;
             }
-        }
+            List<Map<String, Object>> account_balance = this.dbUtil.selectAccountBalance(account_id);
+            double ori_currency = ((BigDecimal) account_balance.get(0).get("balance")).doubleValue();
+            if (ori_currency - amount < 0){
+                return false;
+            }
+            else{
+                this.dbUtil.updateAccountBalance(account_id, ori_currency - amount);
+                return true;
+            }
 
-        return filteredHoldings;
+        }
     }
+
+
+
+
+
+
 
 
 

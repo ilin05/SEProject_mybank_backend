@@ -1,0 +1,102 @@
+@import "basic.css";
+
+/* account.css */
+
+.content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start; /* Aligns content to the start, not center */
+    align-items: flex-start;
+    background-color: #ffffff; /* White background */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow effect */
+    border: 1px solid #ddd; /* Border */
+    margin-top: 20px; /* Space from the header */
+    margin-bottom: 20px; /* Space above the footer */
+    padding: 20px 0; /* Padding at top and bottom for spacing */
+}
+
+.left-panel {
+    flex: 0 1 50%; /* 左侧面板宽度为30%，允许收缩 */
+    padding: 20px;
+    display: flex;
+    flex-direction: column; /* 垂直排列子元素 */
+    border-right: 2px solid #ccc; /* 在两个面板之间添加边界 */
+}
+
+.right-panel {
+    flex: 0 1 50%; /* 右侧面板宽度为70%，允许收缩 */
+    padding: 20px;
+    display: flex;
+    flex-direction: column; /* 垂直排列子元素 */
+}
+
+.account-info, .transaction-form {
+    background-color: #f9f9f9; /* 轻灰色背景 */
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 轻微阴影效果 */
+}
+
+#holdingsContainer {
+    margin-top: 20px;
+}
+
+#holdingsContainer h3 {
+    color: #333;
+    padding: 10px 0;
+}
+
+#holdingsContainer p {
+    margin: 5px 0;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+h2 {
+    color: #333;
+    padding: 10px 0;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.transaction-form form {
+    display: flex;
+    flex-direction: column;
+}
+
+.transaction-form label {
+    margin-bottom: 5px;
+}
+
+.transaction-form input, .transaction-form select {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.transaction-form button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.transaction-form button:hover {
+    background-color: #0056b3;
+}

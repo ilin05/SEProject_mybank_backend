@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>支付验证</title>
+    <link rel="stylesheet" type="text/css" href="./css/payment_verification.css"> <!-- 根据实际情况调整路径 -->
+</head>
+<body>
+<div class="modal-content">
+    <h1>支付验证</h1>
+         <form action="./php/verify_payment.php" method="POST">
+        <label for="password">支付密码:</label>
+        <input type="password" id="password" name="password" required>
+        <input type="submit" value="提交">
+    </form>
+</div>
+<script src="./js/payment_verification.js"></script>
+</body>
+</html>

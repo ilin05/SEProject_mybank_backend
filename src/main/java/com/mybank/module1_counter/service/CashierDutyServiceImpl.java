@@ -120,7 +120,7 @@ public class CashierDutyServiceImpl implements CashierDutyService {
             if(savingAccount.getLossState()) return ApiResult.failure("The payer card is now lost");
 
             String payeeId = txnRequest.getMoneyGoes();
-            SavingAccount payeeSavingAccount=cashierDutyMapper.selectAccount(accountId);
+            SavingAccount payeeSavingAccount=cashierDutyMapper.selectAccount(payeeId);
             if(payeeSavingAccount==null) return ApiResult.failure("payee card id not exists");
             if(payeeSavingAccount.getDeleted()) return ApiResult.failure("The payee card is already deleted");
             if(payeeSavingAccount.getFreezeState()) return ApiResult.failure("The payee card is now frozen");

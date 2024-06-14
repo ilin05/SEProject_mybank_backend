@@ -3,7 +3,6 @@ package com.mybank.module4_creditcard.restapi.administrator;
 
 import com.mybank.module4_creditcard.dao.impl.AuditorDaoImpl;
 import com.mybank.module4_creditcard.entity.role.Auditor;
-import com.mybank.module4_creditcard.entity.role.Authority;
 import com.mybank.module4_creditcard.restapi.GeneralResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -45,15 +44,15 @@ public class AdministratorController {
 
     @PutMapping("/api/administrator/grant-permission/{auditor_id}")
     @ResponseBody
-    public GeneralResponse grantPermission(@PathVariable String auditor_id, @RequestBody Authority authority) {
-        impl.grantAuditorPermission(auditor_id, authority);
+    public GeneralResponse grantPermission(@PathVariable String auditor_id, @RequestBody Auditor auditor) {
+        impl.grantAuditorPermission(auditor_id, auditor.getAuth());
         return new GeneralResponse(-1);
     }
 
     @PutMapping("/api/administrator/revoke-permission/{auditor_id}")
     @ResponseBody
-    public GeneralResponse revokePermission(@PathVariable String auditor_id, @RequestBody Authority authority) {
-        impl.revokeAuditorPermission(auditor_id, authority);
+    public GeneralResponse revokePermission(@PathVariable String auditor_id, @RequestBody Auditor auditor) {
+        impl.revokeAuditorPermission(auditor_id, auditor.getAuth());
         return new GeneralResponse(-1);
     }
 

@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,7 +97,7 @@ public class UserService {
         }
     }
     public List<SavingAccount> findSavingAccountsByCustomerIdAndBalanceGreaterThan(Long customerId, double balance) {
-        return savingAccountRepository.findByCustomerIdAndBalanceGreaterThan(customerId, balance);
+        return savingAccountRepository.findByCustomerIdAndBalanceGreaterThanAndDeletedFalse(customerId, balance);
     }
 
     private BigDecimal calculateInterestRate(BigDecimal loanAmount, int loanDuration) {
@@ -168,7 +169,8 @@ public class UserService {
             loanApplication.setStatus(CONFIRMED);
             loanApplication.setLoanStartDate(LocalDate.now());
             loanApplication.setLoanEndDate(LocalDate.now().plusMonths(loanApplication.getLoanDuration()));
-
+            loanApplication.setPaidAmount(BigDecimal.ZERO);
+            loanApplication.setRepaymentStatus(NOT_REPAID);
             loanApplication.setTotalRepaymentAmount(loanApplication.getLoanAmount());
             loanApplication.setLastInterestUpdateDate(LocalDate.now());
 
@@ -213,7 +215,7 @@ public class UserService {
     }
 
     public List<SavingAccount> findSavingAccountsByCustomerId(Long customerId) {
-        return savingAccountRepository.findByCustomerId(customerId);
+        return savingAccountRepository.findByCustomerIdAndDeletedFalse(customerId);
     }
 
     public List<LoanApplication> getUserLoanApplications(Long customerId) {
@@ -222,15 +224,14 @@ public class UserService {
 
     public void withdrawLoanApplication(Long applicationId) {
         LoanApplication application = loanApplicationRepository.findById(applicationId).orElseThrow();
-        if (application.getStatus().equals(PENDING)) {
-            loanApplicationRepository.delete(application);
-        } else {
+        if (application.getStatus().equals(CONFIRMED)) {
             throw new RuntimeException("Cannot withdraw processed application");
         }
+        loanApplicationRepository.delete(application);
     }
 
     public List<Repayment> getRepaymentRecords(Long loanApplicationId) {
-        return repaymentRepository.findByLoanApplicationId(loanApplicationId);
+        return repaymentRepository.findByLoanId(loanApplicationId);
     }
 
     public Repayment repayLoan(Long loanApplicationId, BigDecimal repaymentAmount, String accountId) {
@@ -245,8 +246,8 @@ public class UserService {
         savingAccountRepository.save(savingAccount);
 
         Repayment repayment = new Repayment();
-        repayment.setLoanApplicationId(loanApplicationId);
-        repayment.setAmount(repaymentAmount);
+        repayment.setLoanId(loanApplicationId);
+        repayment.setRepaymentAmount(repaymentAmount);
         repayment.setAccountId(accountId);
         repayment.setRepaymentDate(LocalDate.now());
         repaymentRepository.save(repayment);
@@ -267,7 +268,7 @@ public class UserService {
     }
 
     public List<Transaction> getTransactionsByCustomerId(Long customerId) {
-        List<SavingAccount> savingAccounts = savingAccountRepository.findByCustomerId(customerId);
+        List<SavingAccount> savingAccounts = savingAccountRepository.findByCustomerIdAndDeletedFalse(customerId);
         List<String> accountIds = savingAccounts.stream()
                 .map(SavingAccount::getAccountId)
                 .collect(Collectors.toList());
@@ -282,7 +283,7 @@ public class UserService {
         }
 
         // 获取用户所有存款账户的余额总和
-        List<SavingAccount> savingAccounts = savingAccountRepository.findByCustomerId(customerId);
+        List<SavingAccount> savingAccounts = savingAccountRepository.findByCustomerIdAndDeletedFalse(customerId);
         BigDecimal totalBalance = savingAccounts.stream()
                 .map(savingAccount -> BigDecimal.valueOf(savingAccount.getBalance()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -398,6 +399,6 @@ public class UserService {
                 .multiply(ageFactor);
 
         return creditLimit;
-    }
+    }//
 }
 

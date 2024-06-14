@@ -1,0 +1,110 @@
+@import "basic.css";
+
+/* trade.css */
+
+.content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Aligns content to the start, not center */
+    align-items: center;
+    background-color: #ffffff; /* White background */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow effect */
+    border: 1px solid #ddd; /* Border */
+    margin-top: 20px; /* Space from the header */
+    margin-bottom: 20px; /* Space above the footer */
+    padding: 20px 0; /* Padding at top and bottom for spacing */
+}
+
+/* 交易和查询功能区域设置为行方向的flex布局，使其左右分布 */
+.trade-area {
+    flex: 1; /* 占满剩余空间 */
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    overflow: hidden; /* 隐藏溢出内容 */
+}
+
+.currency-selection, .amount-entry {
+    flex: 1;
+    padding: 20px;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #ffffff;
+    height: 80%; /* 充满其父容器的高度 */
+}
+
+.trade-type-selection {
+    width: 100%;
+    margin: 10px 0;
+    text-align: center;
+}
+
+/* 输入框和选择框样式 */
+input[type="number"], select {
+    width: 80%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button {
+    width: 80%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #0073e6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+
+/* 结果显示区样式 */
+.result-display, .confirmation-area {
+    width: 80%; /* 全宽 */
+    text-align: center;
+    padding: 10px 0;
+    white-space: pre-wrap; /* Preserve whitespace and line breaks */
+}
+
+.result-display {
+    order: 2; /* 确保在确认按钮上方 */
+    margin-top: auto; /* 推到底部 */
+}
+
+.confirmation-area {
+    order: 3; /* 最后显示 */
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px; /* 底部留有间隔 */
+}
+
+.confirm-button {
+    padding: 12px 24px;
+    background-color: #0073e6;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.confirm-button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+

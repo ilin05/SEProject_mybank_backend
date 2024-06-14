@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS customer
     phone_number       VARCHAR(20)        NOT NULL,
     address            VARCHAR(50)        NOT NULL,
     credit_line        DECIMAL(20, 2) DEFAULT 0,
-    assets             DECIMAL(20, 2) DEFAULT 0,
+    assets             DECIMAL(20, 2) DEFAULT 10000,
     internet_bank_open BOOLEAN        DEFAULT FALSE,
     CHECK (credit_line >= 0),
     CHECK (assets >= 0 )
@@ -57,6 +57,13 @@ CREATE TABLE IF NOT EXISTS fixed_deposit
         ON UPDATE CASCADE,
     CHECK ( deposit_amount >= 0 )
 );
+
+INSERT INTO `fixed_deposit_type` VALUES ('A', 3, 0.011500);
+INSERT INTO `fixed_deposit_type` VALUES ('B', 6, 0.013500);
+INSERT INTO `fixed_deposit_type` VALUES ('C', 12, 0.014500);
+INSERT INTO `fixed_deposit_type` VALUES ('D', 24, 0.016500);
+INSERT INTO `fixed_deposit_type` VALUES ('E', 36, 0.019500);
+INSERT INTO `fixed_deposit_type` VALUES ('F', 60, 0.020000);
 
 CREATE TABLE IF NOT EXISTS transaction
 (
@@ -119,7 +126,8 @@ CREATE TABLE IF NOT EXISTS reviewer
 (
     id       INT PRIMARY KEY AUTO_INCREMENT,
     name     VARCHAR(50)  NOT NULL,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    approval_level INT DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS loan_application
@@ -294,3 +302,18 @@ create table reviews
     foreign key (auditor_id) references auditors (auditor_id) on delete cascade on update cascade
 ) engine = innodb
   charset = utf8mb4;
+
+# 网银
+CREATE TABLE `internet`  (
+    `id` int(0) NOT NULL AUTO_INCREMENT,
+     `customer_account_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+     `customer_id` int(0) NULL DEFAULT NULL,
+     `is_in_black_list` tinyint(1) NULL DEFAULT NULL,
+     `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+     `create_time` datetime(0) NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(0),
+     PRIMARY KEY (`id`) USING BTREE,
+     UNIQUE INDEX `unique_customer_id`(`customer_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+
+insert into wh_currency values(0, "人民币", 1);

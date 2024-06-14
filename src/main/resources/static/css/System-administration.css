@@ -1,0 +1,69 @@
+/* System-administration.css */
+body, html {
+    font-family: Arial, sans-serif;
+    padding: 0;
+    margin: 0;
+    background-image: url('../img/system.jpg');
+    background-position: center; /* 使背景图片居中 */
+    background-repeat: no-repeat; /* 防止背景图片重复 */
+    background-size: cover; /* 背景图片覆盖整个视口 */
+    background-attachment: fixed;
+}
+
+.container {
+    width: 80%;
+    margin: 20px auto;
+    background: rgba(255, 255, 255, 0.9); /* 半透明白色背景 */
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #333;
+}
+
+.form-section, .permissions-section {
+    margin-bottom: 20px;
+}
+
+input[type="text"], input[type="password"] {
+    padding: 10px;
+    margin-right: 10px;
+    width: 200px;
+}
+
+button {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #f0f0f0;
+}
+
+.navigation {
+    margin-bottom: 20px;
+}
+
+.navigation button {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 5px;
+}
+
+.navigation button:hover {
+    background-color: #e0e0e0;
+}

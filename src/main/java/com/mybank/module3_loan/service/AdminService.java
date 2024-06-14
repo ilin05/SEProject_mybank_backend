@@ -1,18 +1,16 @@
 package com.mybank.module3_loan.service;
 
-//import com.mybank.module3_loan.model.Admin;
 import com.mybank.module3_loan.model.Reviewer;
-//import com.mybank.module3_loan.repository.AdminRepository;
 import com.mybank.module3_loan.repository.ReviewerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AdminService {
 
-//    @Autowired
-//    private AdminRepository adminRepository;
 
     @Autowired
     private ReviewerRepository reviewerRepository;
@@ -28,17 +26,27 @@ public class AdminService {
 //        return null;
 //    }
 
-    public Reviewer createReviewer(Reviewer reviewer) {
-        reviewer.setPassword(passwordEncoder.encode(reviewer.getPassword()));
+    public Reviewer createReviewer(String username, String password, Integer approvalLevel) {
+        Reviewer reviewer = new Reviewer();
+        reviewer.setPassword(password);
+        reviewer.setName(username);
+        reviewer.setApprovalLevel(approvalLevel);
         return reviewerRepository.save(reviewer);
     }
 
-    public Reviewer updateReviewer(Reviewer reviewer) {
-        reviewer.setPassword(passwordEncoder.encode(reviewer.getPassword()));
+    public Reviewer updateReviewer(Long reviewerId, String username, String password, Integer approvalLevel) {
+        Reviewer reviewer = reviewerRepository.findById(reviewerId).orElseThrow();
+        reviewer.setPassword(password);
+        reviewer.setName(username);
+        reviewer.setApprovalLevel(approvalLevel);
         return reviewerRepository.save(reviewer);
     }
 
     public void deleteReviewer(Long reviewerId) {
         reviewerRepository.deleteById(reviewerId);
+    }
+
+    public List<Reviewer> findReviewer() {
+        return reviewerRepository.findAll();
     }
 }

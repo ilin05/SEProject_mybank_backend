@@ -1,0 +1,94 @@
+@import "basic.css";
+
+/* transaction_records.css */
+@import "basic.css";
+
+/* transaction_records.css */
+.content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Aligns content to the start, not center */
+    align-items: center;
+    background-color: #ffffff; /* White background */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow effect */
+    border: 1px solid #ddd; /* Border */
+    margin-top: 20px; /* Space from the header */
+    margin-bottom: 20px; /* Space above the footer */
+    padding: 20px 0; /* Padding at top and bottom for spacing */
+    position: relative; /* To position the pagination within the content */
+}
+
+.table {
+    width: 80%;
+    border-collapse: collapse; /* 确保边框合并为单一边框 */
+    margin-top: 20px; /* 表格上方留些空间 */
+    margin: 0 auto;
+}
+
+th, td {
+    border: 1px solid #ddd; /* 单元格边框 */
+    padding: 10px; /* 单元格内边距 */
+    text-align: center; /* 文本左对齐 */
+    height: 50px;
+    white-space: nowrap;
+    width: 150px;
+}
+
+th {
+    background-color: #4CAF50; /* 标题背景颜色 */
+    color: white; /* 标题文字颜色 */
+    height: 50px;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* 交替行背景色 */
+}
+
+tr:hover {
+    background-color: #ddd; /* 鼠标悬停行背景色 */
+}
+
+/* Pagination styles */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px; /* Space above the pagination controls */
+    position: absolute;
+    bottom: 20px; /* Fix the pagination 20px from the bottom of the content */
+    width: 100%;
+}
+
+.pagination button {
+    background-color: #4CAF50; /* 按钮背景颜色 */
+    color: white; /* 按钮文字颜色 */
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px; /* Space between buttons */
+    cursor: pointer;
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+    background-color: #45a049; /* 按钮悬停背景颜色 */
+}
+
+.pagination button:disabled {
+    background-color: #ccc; /* 禁用按钮背景颜色 */
+    cursor: not-allowed; /* 禁用按钮光标 */
+}
+
+.pagination span {
+    margin: 0 10px; /* Space around the page number */
+    font-size: 16px;
+}
+
+.no-data-message {
+    font-size: 18px;
+    color: #555;
+    text-align: center;
+    margin-top: 20px;
+}
+

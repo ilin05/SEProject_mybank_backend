@@ -12,6 +12,7 @@ import com.mybank.module1_counter.request.TransferRequest;
 import com.mybank.module2_counter.entities.Internet;
 import com.mybank.module2_counter.mapper.CustomerMapper;
 import com.mybank.module2_counter.mapper.InternetMapper;
+import com.mybank.module2_counter.mapper.ModifyPasswordMapper;
 import com.mybank.module2_counter.mapper.TransactionMapper;
 import com.mybank.utils.ApiResult;
 import com.mybank.utils.HashUtils;
@@ -23,6 +24,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.sql.Struct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -39,6 +41,8 @@ public class InterentController {
     private CashierDutyMapper cashierDutyMapper;
     @Autowired
     private TransactionMapper transactionsMapper;
+    @Autowired
+    private ModifyPasswordMapper modifyPasswordMapper;
 
 
     @PostMapping("/internet/transfer")
@@ -258,7 +262,11 @@ public class InterentController {
         claims.put("customerId", internet.getCustomerId());
         claims.put("customerAccountId", internet.getCustomerAccountId());
         String jwt = JwtUtils.generateJwt(claims);
-        return ApiResult.success(jwt);
+        Map<String, Object> result = new HashMap<>();
+        result.put("token", jwt);
+        result.put("customerId", internet.getCustomerId());
+        //return ApiResult.success(jwt);
+        return ApiResult.success(result);
     }
 
     @PostMapping("/internet/query")
@@ -306,6 +314,25 @@ public class InterentController {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return ApiResult.failure(e.getMessage());
         }
+    }
+
+    @PostMapping("/internet/modify")
+    public ApiResult modify(@RequestBody Map<String, String> loginRequest) {
+        System.out.println(loginRequest);
+        String customerAccountId = loginRequest.get("customerAccountId");
+        String oldPassword = loginRequest.get("oldPassword");
+        String newPassword = loginRequest.get("newPassword");
+        QueryWrapper<Internet> wrapper = new QueryWrapper<>();
+        wrapper.eq("customer_account_id", customerAccountId);
+        Internet internet = internetMapper.selectOne(wrapper);
+        if (internet == null) {
+            return ApiResult.failure(900, "CustomerAccountId not exists");
+        }
+        if (!StringUtils.equals(internet.getPassword(), oldPassword)) {
+            return ApiResult.failure("password incorrect");
+        }
+        modifyPasswordMapper.UpdatePassword(customerAccountId, newPassword);
+        return ApiResult.success("密码修改成功");
     }
 
 }

@@ -83,9 +83,11 @@ public class ApplicationDaoImpl implements ApplicationDao {
     }
 
     @Override
-    public void reviewApplication(Review review) throws NullPointerException, NumberFormatException,
+    public boolean reviewApplication(Review review) throws NullPointerException, NumberFormatException,
             DataAccessException {
         Objects.requireNonNull(review);
+
+
         // Update application status
         String updSql = "update applications set status = ? where appl_id = ? and status = ?";
         jdbc.update(updSql,
@@ -144,5 +146,6 @@ public class ApplicationDaoImpl implements ApplicationDao {
             String updCardSql = "update applications set credit_card_id = ? where appl_id = ?";
             jdbc.update(updCardSql, cardId, Integer.parseInt(review.getApplId()));
         }
+        return true;
     }
 }

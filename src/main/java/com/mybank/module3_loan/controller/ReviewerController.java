@@ -20,6 +20,27 @@ public class ReviewerController {
     @Autowired
     private ReviewerService reviewerService;
 
+    @PostMapping("/confirm")
+    public ResponseEntity<String> reviewLoan(
+            @RequestParam Long loanId,
+            @RequestParam Long reviewerId,
+            @RequestParam String status,
+            @RequestParam String reviewComments,
+            @RequestParam BigDecimal collateralAmount) {
+        boolean result = reviewerService.reviewLoan(loanId, reviewerId, status, reviewComments, collateralAmount);
+        if (result) {
+            return ResponseEntity.ok("success");
+        } else {
+            return ResponseEntity.ok("failed");
+        }
+    }
+
+    @PostMapping("/list")
+    public ResponseEntity<List<LoanApplication>> getPendingLoansByReviewerId(@RequestParam Long reviewerId) {
+        List<LoanApplication> pendingLoans = reviewerService.getPendingLoansByReviewerId(reviewerId);
+        return ResponseEntity.ok(pendingLoans);
+    }
+
     @PostMapping("/detail")
     public ResponseEntity<CustomerFinancialSummary> getCustomerFinancialSummary(@RequestParam Long customerId) {
         CustomerFinancialSummary summary = reviewerService.getCustomerFinancialSummary(customerId);

@@ -34,8 +34,8 @@ public interface CashierDutyMapper {
 
     // 定期存款
     @Options(useGeneratedKeys = true, keyProperty = "fixedDepositId")
-    @Insert("insert into fixed_deposit(account_id, deposit_time, deposit_amount, deposit_type) " +
-            "values ( #{accountId}, #{depositTime}, #{depositAmount}, #{depositType})")
+    @Insert("insert into fixed_deposit(account_id, deposit_time, deposit_amount, deposit_type, is_renewal) " +
+            "values ( #{accountId}, #{depositTime}, #{depositAmount}, #{depositType}, #{isRenewal})")
     public int insertFixedDeposit(FixedDeposit fixedDeposit);
 
     // 获取定存记录

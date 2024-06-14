@@ -19,7 +19,7 @@ public class WHDBUtil {
     String table_transaction = "wh_transaction(user_id, currency_to_id, currency_from_id, amount_to, amount_from, transaction_time)";
     String table_administrator = "administrator (adm_id, super_authority, adm_name, adm_password, control_currency, control_rate)";
     String table_operator = "wh_operator(opt_id, opt_name, opt_password, control_currency, control_rate)";
-
+    String table_out_transaction = "transaction(card_id, card_type, transaction_time, transaction_amount, transaction_type, money_source, money_goes)";
 
     public WHDBUtil(JdbcTemplate jdbc){
         this.jdbc = jdbc;
@@ -220,6 +220,38 @@ public class WHDBUtil {
 
 
 
+    //saving_account
+    public List<Map<String, Object>> selectAccount(String account_name){
+        Object[] objects = new Object[]{account_name};
+        return jdbc.queryForList("select * from saving_account where account_id = ?", objects);
+    }
+    public List<Map<String, Object>> selectAccount(String account_name, String password){
+        Object[] objects = new Object[]{account_name, password};
+        return jdbc.queryForList("select * from saving_account where account_id = ? and password = ?", objects);
+    }
+    public List<Map<String, Object>> selectAccountBalance(String account_name){
+        Object[] objects = new Object[]{account_name};
+        return jdbc.queryForList("select * from saving_account where account_id = ?", objects);
+    }
+    public List<Map<String, Object>> selectAccountBalance(String account_name, String password){
+        Object[] objects = new Object[]{account_name, password};
+        return jdbc.queryForList("select * from saving_account where account_id = ? and password = ?", objects);
+    }
+    public int updateAccountBalance(String account_name, double account){
+        Object[] objects = new Object[]{account, account_name};
+        return jdbc.update("update saving_account set balance = ? where account_id = ?", objects);
+    }
 
+    //transaction
+    public int insertOutTransaction(String card_id, String user_name, double amount, String time, boolean to_WH){
+        if (to_WH){
+            Object[] objects = new Object[]{card_id, time, amount, card_id, user_name + "_CNY"};
+            return jdbc.update("insert into " + table_out_transaction + " values (?, 'save', ?, ?, 'to_foreign', ?, ?)", objects);
+        }
+        else {
+            Object[] objects = new Object[]{card_id, time, amount, user_name + "_CNY", card_id};
+            return jdbc.update("insert into " + table_out_transaction + " values (?, 'save', ?, ?, 'from_foreign', ?, ?)", objects);
+        }
+    }
 
 }

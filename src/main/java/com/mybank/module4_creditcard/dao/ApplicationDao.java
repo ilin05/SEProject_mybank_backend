@@ -44,6 +44,7 @@ public interface ApplicationDao {
      * created according to the information of the application.
      *
      * @param review Review object
+     * @return
      */
-    void reviewApplication(Review review);
+    boolean reviewApplication(Review review);
 }
