@@ -72,7 +72,7 @@ public class ApplicationDaoImpl implements ApplicationDao {
             DataAccessException {
         Objects.requireNonNull(userId);
         String sql = "select * from applications where customer_id = ? order by time desc";
-        return jdbc.query(sql, new ApplicationRowMapper(), Integer.parseInt(userId) );
+        return jdbc.query(sql, new ApplicationRowMapper(), Integer.parseInt(userId));
     }
 
     @Override
@@ -87,15 +87,19 @@ public class ApplicationDaoImpl implements ApplicationDao {
             DataAccessException {
         Objects.requireNonNull(review);
 
-
         // Update application status
-        String updSql = "update applications set status = ? where appl_id = ? and status = ?";
-        jdbc.update(updSql,
+        String updSql = "update applications set status = ? where appl_id = ? and status = ? " +
+                "and exists(select 1 from auditors where auditor_id = ? and can_review = true)";
+        int num = jdbc.update(updSql,
                 review.isApproved() ?
                         Application.ApplStatus.APPROVED.getIntValue() :
                         Application.ApplStatus.REJECTED.getIntValue(),
                 Integer.parseInt(review.getApplId()),
-                Application.ApplStatus.REVIEWING.getIntValue());
+                Application.ApplStatus.REVIEWING.getIntValue(),
+                review.getAuditorId());
+
+        if (num == 0)
+            return false;
 
         // Create review record
         String revSql = "insert into reviews " +
