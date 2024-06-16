@@ -5,6 +5,7 @@ import com.mybank.module4_creditcard.dao.mapper.CreditCardRowMapper;
 import com.mybank.module4_creditcard.entity.CreditCard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,6 +82,16 @@ public class CreditCardDaoImpl implements CreditCardDao {
         jdbc.update(transSql, depositId, "save", now, consumption, "repayment", "internet", cardId, null);
 
         return true;
+    }
+
+    @Scheduled(cron = "0 0 0 * * ? ")
+    private void repay() {
+        String qryCard = "SELECT card_id FROM creditcards WHERE status = ? AND consumption > 0 ";
+        List<String> cardIds = jdbc.queryForList(qryCard, String.class, CreditCard.CardStatus.ACTIVE.getIntValue());
+
+        for (String cardId : cardIds) {
+            repay(cardId);
+        }
     }
 }
 
